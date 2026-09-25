@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+
+@theme {
+    --color-project-main: #e35b20;  
+}
+
+
+.btn-premium {
+  @apply bg-purple-600 text-white font-semibold 
+  py-2 px-6 rounded-lg cursor-pointer
+   hover:bg-purple-700 transition duration-300;
+}
+
+.btn_primary{
+    @apply bg-project-main text-white font-semibold
+     py-2 px-6 rounded-lg cursor-pointer
+      hover:bg-orange-700 transition duration-300;
+}
