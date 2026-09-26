@@ -8,6 +8,7 @@ import SignUpPage from './components/SignUpPage.jsx'
 import Layout from './components/Layout.jsx'
 import InstructionsPage from './components/InstructionPage.jsx'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import ProfileSummary from './components/ProfileSummary.jsx'
 
 
 
@@ -29,6 +30,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/exam" element={<ExamPage/>} />
           <Route path="/instructions" element={<InstructionsPage />} />
+          <Route path='/homepage' element={<ProfileSummary/>}/>
         </Route>
 
       </Routes>

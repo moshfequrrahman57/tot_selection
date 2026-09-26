@@ -1,8 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from './routes/test_db.js';
+import testdb_route from './routes/test_db.js';
 import auth_router from './routes/auth.js';
+import profileinfo_route from './routes/profileInfo.js';
 
 const app = express();
 app.use(cors());
@@ -17,8 +18,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Welcome to the TOT Selection Project Backend! ');
 });
-app.use("/api", router);
+app.use("/api", testdb_route);
 app.use("/auth", auth_router);
+app.use("/login", profileinfo_route)
 
 // সার্ভার চালু করা
 app.listen(PORT, () => {

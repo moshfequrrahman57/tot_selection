@@ -2,10 +2,10 @@ import express from 'express';
 import pool from '../config/db.js';
 import protect from '../middleware/auth_middleware.js';
 
-const router = express.Router();
+const testdb_route = express.Router();
 
 
-router.get('/test-db', protect, async (req, res) => {
+testdb_route.get('/test-db', protect, async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
     const carsData  = await pool.query('SELECT * FROM cars');
@@ -16,4 +16,4 @@ router.get('/test-db', protect, async (req, res) => {
   }
 });
 
-export default router;
+export default testdb_route;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Eye, EyeOff, Lock, User, Phone, MapPin } from 'lucide-react';
+import { Eye, EyeOff, Lock, User, Phone, MapPin, House, LandmarkIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 
@@ -30,11 +30,13 @@ export default function SignUpPage() {
     division: '',
     district: '',
     upazila: '',
+    institute: '',
     password: '',
   });
   const [selectedDivision, setSelectedDivision]=useState("");
   const [selectedDistrict, setSelectedDistrict]=useState("");
   const [selectedUpazila, setSelectedUpazila]=useState("");
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,15 +44,36 @@ export default function SignUpPage() {
     //console.log('Form Data Updated:', { ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle registration submission logic here
-    console.log('Registering user with:', formData);
+   const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent standard page refresh
+    console.log({...formData});
+    try {
+      const response = await fetch('http://localhost:6001/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Inform API that JSON data is coming
+        },
+        body: JSON.stringify(formData), // Convert state object to JSON string
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Registration Successful!');
+        // Clear form values if needed
+        setFormData({name: '',phone: '', division: '',district: '', upazila: '',institute: '',password: '',});
+      } else {
+        setMessage(data.error || 'Registration failed.');
+      }
+    } catch (error) {
+      console.error('Error connecting to API:', error);
+      setMessage('Could not connect to the server.');
+    }
   };
 
 
   useEffect(()=>{
-    console.log(formData['division'],formData['district'],formData['upazila']);
+   // console.log({...formData});
   },[formData])
 
   return (
@@ -68,6 +91,7 @@ export default function SignUpPage() {
           <p className="mt-2 text-sm text-slate-500">
             Please fill in your details to get started.
           </p>
+          {message && <p>{message}</p>}
         </div>
 
         {/* Form Body */}
@@ -234,8 +258,27 @@ export default function SignUpPage() {
             </div>
             </div>
 
-
-
+      {/*Institute Name */}
+          <div>
+            <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Institute
+            </label>
+            <div className="relative rounded-xl shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <LandmarkIcon className="h-5 w-5" />
+              </div>
+              <input
+                id="institute"
+                name="institute"
+                type="text"
+                required
+                value={formData.institute}
+                onChange={handleChange}
+                placeholder="Ideal High School"
+                className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
+              />
+            </div>
+          </div>
 
 
           {/* Password Input */}

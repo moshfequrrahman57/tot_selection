@@ -1,15 +1,47 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Phone } from 'lucide-react'; // Optional: install lucide-react for sharp icons
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [credentials, setCredentials] = useState({
+    phone: '',
+    password: ''
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const navigate=useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle your authentication logic here
-    console.log('Logging in with:', { phone, password });
+const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    try {
+      const response = await fetch('http://localhost:6001/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Signals Express to parse JSON
+        },
+        body: JSON.stringify(credentials), // Sends { mobile, password }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessMessage('Login successful!');
+        
+        // OPTIONAL: If your API returns a JWT token or user data, save it here
+        localStorage.setItem('token', data.token);
+        navigate('/homepage');
+        console.log('Logged in user info:', data);
+      } else {
+        // Displays backend validation or database errors (e.g., "Invalid credentials")
+        setErrorMessage(data.error || 'Login failed.');
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      setErrorMessage('Unable to connect to the server. Please check your network.');
+    }
   };
 
   return (
@@ -23,6 +55,8 @@ export default function LoginPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
               Welcome back
             </h1>
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+            {successMessage && <p style={{color: 'green'}}>{successMessage}</p>}
             <p className="mt-2 text-sm text-slate-500">
               Please enter your details to access your account.
             </p>
@@ -44,8 +78,8 @@ export default function LoginPage() {
                   type="tel"
                   autoComplete="username"
                   required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  value={credentials['phone']}
+                  onChange={(e) => setCredentials((prev)=>({...prev,phone:e.target.value}))}
                   placeholder="017XXXXXXXX"
                   className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
                 />
@@ -71,8 +105,8 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={credentials['password']}
+                  onChange={(e) => setCredentials((prev)=>({...prev, password:e.target.value}))}
                   placeholder="••••••••"
                   className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-12 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100"
                 />
