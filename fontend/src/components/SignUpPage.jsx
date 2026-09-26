@@ -1,34 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Eye, EyeOff, Lock, User, Phone, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Alphabetically sorted list of all 64 districts of Bangladesh
-const BANGLADESH_DISTRICTS = [
-  "Bagerhat", "Bandarban", "Barguna", "Barishal", "Bhola", "Bogra", "Brahmanbaria", 
-  "Chandpur", "Chapainawabganj", "Chattogram", "Chuadanga", "Comilla", "Cox's Bazar", 
-  "Dhaka", "Dinajpur", "Faridpur", "Feni", "Gaibandha", "Gazipur", "Gopalganj", 
-  "Habiganj", "Jamalpur", "Jashore", "Jhalokati", "Jhenaidah", "Joypurhat", 
-  "Khagrachhari", "Khulna", "Kishoreganj", "Kurigram", "Kushtia", "Lakshmipur", 
-  "Lalmonirhat", "Madaripur", "Magura", "Manikganj", "Meherpur", "Moulvibazar", 
-  "Munshiganj", "Mymensingh", "Naogaon", "Narail", "Narayanganj", "Narsingdi", 
-  "Natore", "Netrokona", "Nilphamari", "Noakhali", "Pabna", "Panchagarh", 
-  "Patuakhali", "Pirojpur", "Rajbari", "Rajshahi", "Rangamati", "Rangpur", 
-  "Satkhira", "Shariatpur", "Sherpur", "Sirajganj", "Sunamganj", "Sylhet", 
-  "Tangail", "Thakurgaon"
-];
+
 
 export default function SignUpPage() {
+  const BANGLADESH = {
+ 
+  Sylhet:   {
+      Sylhet: [ "Balaganj", "Beanibazar", "Bishwanath", "Companiganj", "Dakshin Surma", "Fenchuganj", "Golapganj", "Gowainghat", "Jaintiapur", "Kanaighat", "Osmani Nagar", "Sylhet Sadar", "Zakiganj"],
+      Moulvibazar: ["Barlekha", "Juri", "Kamalganj", "Kulaura",  "Moulvibazar Sadar", "Rajnagar", "Sreemangal"],
+      Habiganj: [ "Ajmiriganj", "Bahubal", "Baniachong", "Chunarughat", "Habiganj Sadar", "Lakhai", "Madhabpur", "Nabiganj", "Sayestaganj"],
+      Sunamganj: [ "Bishwamvarpur", "Chhatak", "Derai", "Dharamapasha",  "Dowarabazar", "Jagannathpur", "Jamalganj", "Madhyanagar", "Shalla", "Shantiganj", "Sunamganj Sadar", "Tahirpur"],
+    },
+  Rangpur: {
+    
+      Rangpur: ["Badarganj", "Gangachara", "Kaunia", "Mithapukur", "Pirgachha", "Pirganj", "Rangpur Sadar", "Taraganj"],
+      Dinajpur: ["Biral", "Birampur", "Birganj", "Bochaganj",  "Chirirbandar", "Dinajpur Sadar", "Fulbari", "Ghoraghat",  "Hakimpur", "Kaharole", "Khansama", "Nawabganj", "Parbatipur"],
+      Gaibandha: [ "Fulchhari", "Gaibandha Sadar", "Gobindaganj", "Palashbari", "Sadullapur", "Saghata", "Sundarganj"]
+    }, 
+  
+  
+};
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
+    division: '',
     district: '',
+    upazila: '',
     password: '',
   });
+  const [selectedDivision, setSelectedDivision]=useState("");
+  const [selectedDistrict, setSelectedDistrict]=useState("");
+  const [selectedUpazila, setSelectedUpazila]=useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    //console.log('Form Data Updated:', { ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -36,6 +47,11 @@ export default function SignUpPage() {
     // Handle registration submission logic here
     console.log('Registering user with:', formData);
   };
+
+
+  useEffect(()=>{
+    console.log(formData['division'],formData['district'],formData['upazila']);
+  },[formData])
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center  px-4 sm:px-6 lg:px-8 font-sans">
@@ -101,27 +117,35 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* District Dropdown Field */}
+          {/* division Dropdown Field */}
           <div>
-            <label htmlFor="district" className="block text-sm font-semibold text-slate-700 mb-1.5">
-              District
+            <label htmlFor="division" className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Division
             </label>
             <div className="relative rounded-xl shadow-sm">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <MapPin className="h-5 w-5" />
               </div>
               <select
-                id="district"
-                name="district"
+                id="division"
+                name="division"
                 required
-                value={formData.district}
-                onChange={handleChange}
+                value={selectedDivision}
+                onChange={(e)=>{
+                  const newDivision=e.target.value;
+                  setSelectedDivision(newDivision);
+                  setFormData((prev)=>({...prev, division:newDivision, district:"", upazila:""}));
+                  setSelectedDistrict("");
+                  setSelectedUpazila("");
+                
+                  
+                }}
                 className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 appearance-none cursor-pointer"
               >
-                <option value="" disabled hidden>Select your district</option>
-                {BANGLADESH_DISTRICTS.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
+                <option value="" >Select your division</option>
+                {Object.keys(BANGLADESH).map((division) => (
+                  <option key={division} value={division}>
+                    {division}
                   </option>
                 ))}
               </select>
@@ -133,6 +157,86 @@ export default function SignUpPage() {
               </div>
             </div>
           </div>
+        { /* District Dropdown Field */}
+        <div>
+            <label htmlFor="district" className="block text-sm font-semibold text-slate-700 mb-1.5">
+              District
+            </label>
+             <div className="relative rounded-xl shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <select
+                id="district"
+                name="district"
+                required
+                value={selectedDistrict}
+                onChange={(e)=>{
+                  const newDistrict=e.target.value;
+                  setSelectedDistrict(newDistrict);
+                  setFormData((prev)=>({...prev,district:newDistrict,upazila:""}));
+                  setSelectedUpazila("");
+                  
+                  
+                }}
+                className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 appearance-none cursor-pointer"
+              >
+                <option value="" >Select your district</option>
+                { selectedDivision && Object.keys(BANGLADESH[selectedDivision]).map(district=>{
+                return  <option key={district} value={district}>{district}</option>
+                })}
+              </select>
+              {/* Custom Dropdown Chevron Icon */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            </div>
+
+
+
+   { /* Upazila Dropdown Field */}
+        <div>
+            <label htmlFor="upazila" className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Upazila
+            </label>
+             <div className="relative rounded-xl shadow-sm">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <select
+                id="upazila"
+                name="upazila"
+                required
+                value={selectedUpazila}
+                onChange={(e)=>{
+                  const newUpazila=e.target.value;
+                  setSelectedUpazila(newUpazila);
+                  setFormData((prev)=>({...prev,upazila:newUpazila}));
+                  
+                  
+                }}
+                className="block w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm text-slate-900 outline-none transition-all duration-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 appearance-none cursor-pointer"
+              >
+                <option value="" >Select your upazila</option>
+                { selectedDivision && selectedDistrict && BANGLADESH[selectedDivision][selectedDistrict]?.map(upazila=>{
+                 return <option key={upazila} value={upazila}>{upazila}</option>
+                })}
+              </select>
+              {/* Custom Dropdown Chevron Icon */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            </div>
+
+
+
+
 
           {/* Password Input */}
           <div>
