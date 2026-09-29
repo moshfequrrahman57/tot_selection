@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Phone } from 'lucide-react'; // Optional: install lucide-react for sharp icons
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -9,6 +11,7 @@ export default function LoginPage() {
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { fetchUserProfile } = useContext(AuthContext); // ফাংশনটি আনুন
   const navigate=useNavigate();
 
 const handleSubmit = async (e) => {
@@ -32,6 +35,8 @@ const handleSubmit = async (e) => {
         
         // OPTIONAL: If your API returns a JWT token or user data, save it here
         localStorage.setItem('token', data.token);
+        // 🌟 ম্যাজিক লাইন: এটি কল করার সাথে সাথে গ্লোবাল স্টেট আপডেট হবে
+        await fetchUserProfile(); 
         navigate('/homepage');
         console.log('Logged in user info:', data);
       } else {

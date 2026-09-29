@@ -9,6 +9,8 @@ import Layout from './components/Layout.jsx'
 import InstructionsPage from './components/InstructionPage.jsx'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProfileSummary from './components/ProfileSummary.jsx'
+import HomePage from './components/HomePage.jsx'
+import Profile from './components/Profile.jsx'
 
 
 
@@ -30,7 +32,9 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/exam" element={<ExamPage/>} />
           <Route path="/instructions" element={<InstructionsPage />} />
-          <Route path='/homepage' element={<ProfileSummary/>}/>
+          <Route path='/profilepage' element={<ProfileSummary/>}/>
+          <Route path='/homepage' element={<HomePage/>}/>
+          <Route path='/profile' element={<Profile/>}/>
         </Route>
 
       </Routes>

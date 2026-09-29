@@ -11,7 +11,7 @@ profileinfo_route.get('/profile',protect, async (req, res)=>{
     const userId = req.user.userId; 
 
     // ২. Parameterized Query ব্যবহার করে ডাটাবেজ থেকে তথ্য আনা
-    const queryText = 'SELECT id, name, phone, created_at FROM users WHERE id = $1';
+    const queryText = 'SELECT id, name, phone, division, district, upazila, institute, created_at FROM users WHERE id = $1';
     const result = await pool.query(queryText, [userId]);
 
     if (result.rows.length === 0) {

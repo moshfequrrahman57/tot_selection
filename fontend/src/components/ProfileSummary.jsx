@@ -46,16 +46,8 @@ useEffect(() => {
 
 
   return (
-    <div style={{
-      padding: '15px',
-      border: '1px solid #ddd',
-      borderRadius: '8px',
-      backgroundColor: '#f9f9f9',
-      maxWidth: '300px'
-    }}>
-      <h3 style={{ margin: '0 0 10px 0' }}>👤 Profile Summary</h3>
-      <p style={{ margin: '5px 0' }}><strong>Name:</strong> {user.name}</p>
-      <p style={{ margin: '5px 0' }}><strong>Mobile:</strong> {user.phone}</p>
-    </div>
+   <>
+   
+   </>
   );
 }

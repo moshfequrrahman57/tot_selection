@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext} from 'react';
 import brandlogo from '../assets/vite.svg';
 import { Link, Outlet } from 'react-router-dom';
 import {HomeIcon, NotebookTextIcon} from 'lucide-react'; // Optional: install lucide-react for sharp icons
+import { AuthContext } from './AuthContext';
 
 export default function Layout() {
     const [isOpen, setIsOpen] = useState(false);
+    // কনটেক্সট থেকে ইউজার ডেটা এবং লোডিং স্টেট নিয়ে আসা
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <p>Loading application...</p>;
+
+    
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       
@@ -33,6 +40,9 @@ export default function Layout() {
             </Link>
             <Link to="/exam" className="text-gray-600 hover:text-blue-600 font-medium">
               Exam Panel
+            </Link>
+            <Link to="/profile" className='text-gray-600 hover:text-blue-600 font-medium'>
+            {user ? (<h4>{user.name}</h4>):(<h4>Not Log In</h4>)}
             </Link>
           </div>
 
@@ -86,6 +96,10 @@ export default function Layout() {
           <Link to="/exam" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
             Exam Panel
           </Link>
+           <Link to="/profilepage" className='text-gray-600 hover:text-blue-600 font-medium'>
+            {user ? (<h4>{user.name}</h4>):(<h4>Not Log In</h4>)}
+            </Link>
+            
         </div>
       </div>
     </nav>

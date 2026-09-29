@@ -63,7 +63,7 @@ export default function SignUpPage() {
         // Clear form values if needed
         setFormData({name: '',phone: '', division: '',district: '', upazila: '',institute: '',password: '',});
       } else {
-        setMessage(data.error || 'Registration failed.');
+        setMessage(data.message);
       }
     } catch (error) {
       console.error('Error connecting to API:', error);
@@ -91,7 +91,7 @@ export default function SignUpPage() {
           <p className="mt-2 text-sm text-slate-500">
             Please fill in your details to get started.
           </p>
-          {message && <p>{message}</p>}
+          {message && <p className='text-red-400'>{message}</p>}
         </div>
 
         {/* Form Body */}

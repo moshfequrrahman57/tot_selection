@@ -4,6 +4,9 @@ import cors from 'cors';
 import testdb_route from './routes/test_db.js';
 import auth_router from './routes/auth.js';
 import profileinfo_route from './routes/profileInfo.js';
+import question_route from './routes/questions.js';
+import answer_route from './routes/answers.js';
+import quiz_code_route from './routes/quiz-code.js';
 
 const app = express();
 app.use(cors());
@@ -20,7 +23,10 @@ app.get('/', (req, res) => {
 });
 app.use("/api", testdb_route);
 app.use("/auth", auth_router);
-app.use("/login", profileinfo_route)
+app.use("/login", profileinfo_route);
+app.use("/api/questions",question_route);
+app.use("/api/answers", answer_route);
+app.use("/verify-code",quiz_code_route);
 
 // সার্ভার চালু করা
 app.listen(PORT, () => {
