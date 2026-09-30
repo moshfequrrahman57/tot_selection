@@ -13,7 +13,7 @@ export default function Layout() {
 
     
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen w-full flex-col bg-slate-50">
       
       {/* 🏗️ Common Header */}
     <nav className="bg-white shadow-md relative z-50">
@@ -44,6 +44,10 @@ export default function Layout() {
             <Link to="/profile" className='text-gray-600 hover:text-blue-600 font-medium'>
             {user ? (<h4>{user.name}</h4>):(<h4>Not Log In</h4>)}
             </Link>
+            <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
+              Pdf
+            </Link>
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -96,8 +100,11 @@ export default function Layout() {
           <Link to="/exam" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
             Exam Panel
           </Link>
-           <Link to="/profilepage" className='text-gray-600 hover:text-blue-600 font-medium'>
+           <Link to="/profile" className='text-gray-600 hover:text-blue-600 font-medium'>
             {user ? (<h4>{user.name}</h4>):(<h4>Not Log In</h4>)}
+            </Link>
+            <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
+              Pdf
             </Link>
             
         </div>

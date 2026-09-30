@@ -3,6 +3,7 @@ import { AuthContext } from './AuthContext'; // Path to your AuthContext
 import QuestionList from './QuestionList';     // Path to your QuestionList component
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
+import Pdf_Download from './Pdf_Download';
 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
@@ -17,6 +18,10 @@ const ExamPage = () => {
     const savedStatus = localStorage.getItem('isQuizVerified');
     return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
   });
+  const [submittedData, setSubmittedData] = useState(null);
+
+
+
   const handleVerificationSuccessful= ()=>{
     setIsVerified(true);
     localStorage.setItem('isQuizVerified', 'true');
@@ -49,7 +54,7 @@ const ExamPage = () => {
         headers: { 'Content-Type': 'application/json' ,
           'Authorization': `Bearer ${token}`
         },
-            body: JSON.stringify({
+          body: JSON.stringify({
           name: name,
           phone: phone,
           division: division,
@@ -65,7 +70,8 @@ const ExamPage = () => {
       if (!response.ok) throw new Error(result.error || 'Submission failed');
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
-      
+      const finalData= {...user, answers:selectedAnswers};
+      setSubmittedData(finalData);
       
 
     } catch (err) {
@@ -74,6 +80,7 @@ const ExamPage = () => {
       setSubmitting(false);
     }
   };
+  
 
   if (authLoading) return <div className="text-center py-10">Loading User Profile...</div>;
 
@@ -85,7 +92,9 @@ if (!user) {
   if (!isVerified) {
     return <VerifyQuizCode onVerificationSuccess={handleVerificationSuccessful } />;
   }
-
+  if(submittedData){
+    return <Pdf_Download sub_data={submittedData}/>
+  }
   return (
     <div className="min-h-screen bg-slate-50 py-10 px-4 max-w-2xl mx-auto space-y-6">
       

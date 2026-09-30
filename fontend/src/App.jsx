@@ -11,6 +11,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import ProfileSummary from './components/ProfileSummary.jsx'
 import HomePage from './components/HomePage.jsx'
 import Profile from './components/Profile.jsx'
+import Pdf_Download from './components/Pdf_Download.jsx'
 
 
 
@@ -35,6 +36,7 @@ function App() {
           <Route path='/profilepage' element={<ProfileSummary/>}/>
           <Route path='/homepage' element={<HomePage/>}/>
           <Route path='/profile' element={<Profile/>}/>
+          <Route path='/pdf' element={<Pdf_Download/>}/>
         </Route>
 
       </Routes>
