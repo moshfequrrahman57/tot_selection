@@ -112,7 +112,7 @@ export default function Layout() {
     </nav>
 
       {/* 📥 Content Area where child routes render */}
-      <main className="flex flex-col items-center w-full pt-12 pb-12 min-h-screen bg-slate-300">
+      <main className="flex flex-col items-center w-full pt-12 pb-2 min-h-screen bg-slate-300">
         <Outlet />
       </main>
 

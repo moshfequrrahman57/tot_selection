@@ -3,8 +3,8 @@ import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import Pdf_Content from './Pdf_Content';
 function Pdf_Download({sub_data}){
     return(
-        <div style={{ padding: "10px" }}>
-       
+        <div className='p-9'>
+            <p className='flex items-center justify-center text-green-600 text-2xl font-bold'>আপনার উত্তরপত্র সফলভাবে সাবমিট হয়েছে। </p>
              <PDFDownloadLink
                document={<Pdf_Content sub_data={sub_data}/>}
                fileName="bangla-certificate.pdf"
