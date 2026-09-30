@@ -17,7 +17,7 @@ services:
       - DB_PORT=5432          # 🌟 Inside Docker network, use the internal port 5432
       - DB_DATABASE=quiz_db_705k
       - REDIS_URL=redis://red-daumlrflk1mc73dg0740:6379
-      - FRONTEND_URL=http://localhost:5173
+      - FRONTEND_URL=https://tot-selection-backup-1.onrender.com
     depends_on:
       - postgres-db
       - redis-cache
