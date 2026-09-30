@@ -48,7 +48,7 @@ export default function SignUpPage() {
     e.preventDefault(); // Prevent standard page refresh
     console.log({...formData});
     try {
-      const response = await fetch('http://localhost:6001/auth/register', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Inform API that JSON data is coming

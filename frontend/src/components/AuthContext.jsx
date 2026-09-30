@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:6001/login/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login/profile`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${token}` }
       });

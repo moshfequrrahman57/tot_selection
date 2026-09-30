@@ -16,7 +16,7 @@ const QuestionList = ({onAnswerChange}) => {
       const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
 
       try {
-        const response = await fetch('http://localhost:6001/api/questions/fetch',{
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/questions/fetch`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -9,13 +9,39 @@ import answer_route from './routes/answers.js';
 import quiz_code_route from './routes/quiz-code.js';
 
 const app = express();
-app.use(cors());
+
 dotenv.config();
  
 const PORT = process.env.PORT || 5000;
 
 // মিডেলওয়্যার (JSON ডেটা রিড করার জন্য)
 app.use(express.json());
+
+// CORS Configuration
+
+// 🟢 DYNAMIC PRODUCTION CORS CONFIGURATION
+const allowedOrigins = [
+  'http://localhost:5173', // Your local Vite React port
+  'http://localhost:3000', // Alternative local port if used
+  process.env.FRONTEND_URL // 🌟 Your live React application URL from Render environment variables
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Thunder Client, Postman, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Blocked by security rules: CORS Policy Violation.'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Set to true if you plan to use HTTP-only cookies or sessions later
+}));
+
 
 // ১. টেস্ট রুট: ডেটাবেজের বর্তমান সময় চেক করা
 app.get('/', (req, res) => {

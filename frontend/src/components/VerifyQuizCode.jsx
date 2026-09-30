@@ -17,7 +17,7 @@ const VerifyQuizCode = ({ onVerificationSuccess }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:6001/verify-code/quiz', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/verify-code/quiz`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

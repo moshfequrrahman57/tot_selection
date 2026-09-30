@@ -11,7 +11,7 @@ useEffect(() => {
     const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
 
     try {
-      const response = await fetch('http://localhost:6001/login/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

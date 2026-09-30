@@ -6,10 +6,11 @@ import redis from 'redis';
 const question_route=express.Router();
 
 
-// 🟢 ২. রেডিস ক্লায়েন্ট তৈরি ও কানেক্ট করা
+// 🟢 Dynamic Production and Docker Friendly Connection
 const redisClient = redis.createClient({
-    url: 'redis://127.0.0.1:6379' // আপনার লোকাল রেডিস ইউআরএল
+    url: process.env.REDIS_URL || 'redis://127.0.0.1:6379'
 });
+
 
 redisClient.on('error', (err) => console.error('Redis Client Error:', err));
 

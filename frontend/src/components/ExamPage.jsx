@@ -49,7 +49,7 @@ const ExamPage = () => {
     const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
 
     try {
-      const response = await fetch('http://localhost:6001/api/answers/submit-quiz', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/submit-quiz`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' ,
           'Authorization': `Bearer ${token}`
