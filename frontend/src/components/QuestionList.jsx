@@ -28,8 +28,8 @@ const QuestionList = ({onAnswerChange}) => {
           throw new Error('নেটওয়ার্ক রেসপন্স ঠিক ছিল না');
         }
         const data = await response.json();
-        const sortedData = data.sort((a, b) => a.id - b.id);
-        setQuestions(data);
+        const sortedData = [...data].sort((a, b) => a.id - b.id);
+        setQuestions(sortedData);
         setLoading(false);
       } catch (err) {
         setError(err.message);

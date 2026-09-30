@@ -10,7 +10,7 @@ quiz_code_route.post('/quiz', (req, res) => {
   const { accessCode } = req.body;
 
   // এখানে আপনি যেকোনো সংখ্যা সেট করতে পারেন (যেমন: 12345)
-  const CORRECT_CODE = "2026"; 
+  const CORRECT_CODE = "1001"; 
 
   if (!accessCode) {
     return res.status(400).json({ success: false, error: 'অনুগ্রহ করে কোডটি দিন।' });

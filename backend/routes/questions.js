@@ -33,7 +33,7 @@ question_route.get('/fetch',protect, async (req, res)=>{
     // খ) ক্যাশে না পাওয়া গেলে (Cache Miss) PostgreSQL থেকে ডেটা আনুন
     console.log('🔴 Cache Miss: Fetching from PostgreSQL');
     const result = await pool.query(
-      'SELECT id, question_text, option_a, option_b, option_c, option_d FROM questions ORDER BY RANDOM() LIMIT 20'
+      'SELECT id, question_text, option_a, option_b, option_c, option_d FROM questions ORDER BY id ASC LIMIT 20'
     );
     const questionsFromDB = result.rows;
     await redisClient.set(cacheKey, JSON.stringify(questionsFromDB), {

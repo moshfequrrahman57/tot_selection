@@ -12,7 +12,7 @@ const app = express();
 
 dotenv.config();
  
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 6001;
 
 // মিডেলওয়্যার (JSON ডেটা রিড করার জন্য)
 app.use(express.json());
