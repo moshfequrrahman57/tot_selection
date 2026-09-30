@@ -12,7 +12,7 @@ services:
       - PORT=6001
       # 🟢 Map the exact keys your server.js is looking for:
       - DB_USER=postgres
-      - DB_PASSWORD=mysecretpassword
+      - DB_PASSWORD=Moshfequr#26
       - DB_HOST=postgres-db  # 🌟 Inside Docker network, this points to the database container
       - DB_PORT=5432          # 🌟 Inside Docker network, use the internal port 5432
       - DB_DATABASE=quiz_db
