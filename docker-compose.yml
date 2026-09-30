@@ -11,12 +11,12 @@ services:
     environment:
       - PORT=6001
       # 🟢 Map the exact keys your server.js is looking for:
-      - DB_USER=postgres
-      - DB_PASSWORD=Moshfequr#26
-      - DB_HOST=postgres-db  # 🌟 Inside Docker network, this points to the database container
+      - DB_USER=quiz_db_705k_user
+      - DB_PASSWORD=u50AeCs2GuGn53qbpv9Y2Q6eeX0VHA3S
+      - DB_HOST=dpg-daume2rtqb8s73bujarg-a  # 🌟 Inside Docker network, this points to the database container
       - DB_PORT=5432          # 🌟 Inside Docker network, use the internal port 5432
-      - DB_DATABASE=quiz_db
-      - REDIS_URL=redis://redis-cache:6379
+      - DB_DATABASE=quiz_db_705k
+      - REDIS_URL=redis://red-daumlrflk1mc73dg0740:6379
       - FRONTEND_URL=http://localhost:5173
     depends_on:
       - postgres-db
@@ -32,7 +32,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://localhost:6001
+      - VITE_API_URL=https://tot-selection-backup.onrender.com
     depends_on:
       - backend-app
     networks:
@@ -42,11 +42,11 @@ services:
   postgres-db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=mysecretpassword
-      - POSTGRES_DB=quiz_db
+      - POSTGRES_USER=quiz_db_705k_user
+      - POSTGRES_PASSWORD=u50AeCs2GuGn53qbpv9Y2Q6eeX0VHA3S
+      - POSTGRES_DB=quiz_db_705k
     ports:
-      - "5433:5432" # এটি দেওয়ার কারণে আপনি লোকাল pgAdmin দিয়েও কানেক্ট করতে পারবেন
+      - "5432:5432" # এটি দেওয়ার কারণে আপনি লোকাল pgAdmin দিয়েও কানেক্ট করতে পারবেন
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
