@@ -10,9 +10,11 @@ export const AuthProvider = ({ children }) => {
   // অ্যাপ লোড হওয়ার সময় বা টোকেন চেঞ্জ হলে ডেটা অটো-ফেচ হবে
   const fetchUserProfile = async (tokenParam=null) => {
     const token = tokenParam || localStorage.getItem('token');
+    console.log('Fetching user profile with token from fetchUserProfile:', token);
     if (!token) {
       setUser(null);
       setLoading(false);
+      console.log('No token found, user set to null');
       return;
     }
 
