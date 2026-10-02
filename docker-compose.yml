@@ -10,8 +10,7 @@ services:
       - "6001:6001"
     environment:
       - PORT=6001
-      
-       #🌟 Inside Docker network, this points to the database container
+      #🌟 Inside Docker network, this points to the database container
       - DB_PORT=5432          # 🌟 Inside Docker network, use the internal port 5432
       - DB_DATABASE=quiz_db_705k
       - REDIS_URL=redis://red-daumlrflk1mc73dg0740:6379

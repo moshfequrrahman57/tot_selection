@@ -32,11 +32,11 @@ const handleSubmit = async (e) => {
 
       if (response.ok) {
         setSuccessMessage('Login successful!');
-        
+        const token = data.token; // Assuming your backend returns a JWT token
         // OPTIONAL: If your API returns a JWT token or user data, save it here
         localStorage.setItem('token', data.token);
         // 🌟 ম্যাজিক লাইন: এটি কল করার সাথে সাথে গ্লোবাল স্টেট আপডেট হবে
-        await fetchUserProfile(); 
+        await fetchUserProfile(token); 
         navigate('/homepage');
         console.log('Logged in user info:', data);
       } else {

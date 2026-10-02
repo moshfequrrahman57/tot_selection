@@ -8,8 +8,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // অ্যাপ লোড হওয়ার সময় বা টোকেন চেঞ্জ হলে ডেটা অটো-ফেচ হবে
-  const fetchUserProfile = async () => {
-    const token = localStorage.getItem('token');
+  const fetchUserProfile = async (tokenParam=null) => {
+    const token = tokenParam || localStorage.getItem('token');
     if (!token) {
       setUser(null);
       setLoading(false);

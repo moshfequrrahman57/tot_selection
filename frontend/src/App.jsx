@@ -37,6 +37,7 @@ function App() {
           <Route path='/homepage' element={<HomePage/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/pdf' element={<Pdf_Download/>}/>
+          <Route path="*" element={<LoginPage />} />
         </Route>
 
       </Routes>
