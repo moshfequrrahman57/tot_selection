@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user); // ডাটাবেজ থেকে আসা ইউজার অবজেক্ট
       } else {
         localStorage.removeItem('token'); // ইনভ্যালিড টোকেন হলে রিমুভ
+        console.log("Token remove from auth context due to invalid token or error:", data.error);
         setUser(null);
       }
     } catch (error) {
