@@ -23,6 +23,7 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173', // Your local Vite React port
   'http://localhost:3000', // Alternative local port if used
+  'http://localhost:4173',
   process.env.FRONTEND_URL // 🌟 Your live React application URL from Render environment variables
 ];
 

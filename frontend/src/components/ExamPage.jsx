@@ -4,6 +4,7 @@ import QuestionList from './QuestionList';     // Path to your QuestionList comp
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
 import Pdf_Download from './Pdf_Download';
+import CheatChecker from './CheatChecker';
 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
@@ -11,7 +12,7 @@ const ExamPage = () => {
   
   // 2. State to hold answers bubble up from QuestionList
   const [selectedAnswers, setSelectedAnswers] = useState({});
-  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   // স্টেট ইনিশিয়ালাইজ করার সময় localStorage চেক করা হচ্ছে
   const [isVerified, setIsVerified] = useState(() => {
@@ -19,7 +20,6 @@ const ExamPage = () => {
     return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
   });
   const [submittedData, setSubmittedData] = useState(null);
-
 
 
   const handleVerificationSuccessful= ()=>{
@@ -41,7 +41,7 @@ const ExamPage = () => {
     }
 
     setStatusMessage({ type: '', text: '' });
-    setSubmitting(true);
+    setSubmitted(true);
 
     // Destructure the profile information directly from your Context user object
     const { name, phone, division, district, upazila, institute } = user;
@@ -77,7 +77,7 @@ const ExamPage = () => {
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.message });
     } finally {
-      setSubmitting(false);
+      setSubmitted(false);
     }
   };
   
@@ -108,9 +108,10 @@ if (!user) {
       {/* 🟢 NEW SUBMIT BUTTON COMPONENT (Placed ABOVE the QuestionList) */}
       <QuizSubmitButton 
         onValidateAndSubmit={handleQuizSubmit} 
-        isSubmitting={submitting} 
+        isSubmitted={submitted} 
         totalAnswered={Object.keys(selectedAnswers).length}
       />
+      
 
       {/* 🟢 QUESTION LIST COMPONENT */}
       {/* Pass handleAnswersChange down so it can report answers back up */}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitting, totalAnswered }) => {
+const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered }) => {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-4 z-10">
       <div>
@@ -13,10 +13,10 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitting, totalAnswered }) 
       <button
         type="button"
         onClick={onValidateAndSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitted}
         className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl shadow-sm transition-all disabled:bg-slate-300 text-sm"
       >
-        {isSubmitting ? 'জমা হচ্ছে...' : 'কুইজ সাবমিট করুন'}
+        {isSubmitted ? 'জমা হয়েছে...' : 'কুইজ সাবমিট করুন'}
       </button>
     </div>
   );

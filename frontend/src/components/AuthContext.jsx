@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
+      
       if (response.ok) {
         setUser(data.user); // ডাটাবেজ থেকে আসা ইউজার অবজেক্ট
       } else {

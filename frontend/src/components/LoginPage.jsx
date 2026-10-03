@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Phone } from 'lucide-react'; // Optional: install lucide-react for sharp icons
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-
+import process from 'process';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -20,6 +20,7 @@ const handleSubmit = async (e) => {
     setSuccessMessage('');
 
     try {
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -59,7 +60,7 @@ const handleSubmit = async (e) => {
         <div className="mx-auto w-full max-w-md my-auto py-12">
           <div className="mb-8">
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Welcome back Mr. 
+              Welcome back
             </h1>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             {successMessage && <p style={{color: 'green'}}>{successMessage}</p>}
