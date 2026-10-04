@@ -20,11 +20,12 @@ const ExamPage = () => {
     return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
   });
   const [submittedData, setSubmittedData] = useState(null);
-
+  const [isActive, setIsActive] = useState(false); 
 
   const handleVerificationSuccessful= ()=>{
     setIsVerified(true);
     localStorage.setItem('isQuizVerified', 'true');
+    setIsActive(true); // ভেরিফিকেশন সফল হলে টাইমার শুরু হবে
   }
 
   // Callback to receive answers from QuestionList child component
@@ -40,8 +41,9 @@ const ExamPage = () => {
       return;
     }
 
-    setStatusMessage({ type: '', text: '' });
+    // setStatusMessage({ type: '', text: '' });
     setSubmitted(true);
+    setIsActive(false); // Stop the timer when submitting
 
     // Destructure the profile information directly from your Context user object
     const { name, phone, division, district, upazila, institute } = user;
@@ -110,6 +112,7 @@ if (!user) {
         onValidateAndSubmit={handleQuizSubmit} 
         isSubmitted={submitted} 
         totalAnswered={Object.keys(selectedAnswers).length}
+        isActive={isActive}
       />
       
 
