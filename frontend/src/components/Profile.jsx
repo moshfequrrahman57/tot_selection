@@ -16,12 +16,7 @@ const handleLogout = () => {
 
     // 3. Kick the user out to the login page
     // Using { replace: true } prevents them from clicking the browser's "Back" button to return
-    navigate('/login', { replace: true });
-
-    // ৩. গ্লোবাল স্টেট নাল করা
-  if (setUser) {
-    setUser(null); 
-  }
+      window.location.href = '/login'; 
   };
 
 
