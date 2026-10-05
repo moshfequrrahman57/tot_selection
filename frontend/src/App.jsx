@@ -15,6 +15,7 @@ import Pdf_Download from './components/Pdf_Download.jsx'
 
 
 
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -26,7 +27,7 @@ function App() {
         {/* Parent route using the layout container */}
         <Route element={<Layout />}>
           {/* Redirect empty path straight to login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/instructions" replace />} />
           
           {/* Child pages that share the header */}
           <Route path="/login" element={<LoginPage />} />
@@ -38,6 +39,7 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/pdf' element={<Pdf_Download/>}/>
           <Route path="*" element={<LoginPage />} />
+          
         </Route>
 
       </Routes>

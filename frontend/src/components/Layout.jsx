@@ -9,7 +9,9 @@ export default function Layout() {
     // কনটেক্সট থেকে ইউজার ডেটা এবং লোডিং স্টেট নিয়ে আসা
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return <p>Loading application...</p>;
+  if (loading) return (
+    <span className="loading loading-bars  loading-lg md:loading-xl"></span>
+  )
 
     
   return (
@@ -23,7 +25,7 @@ export default function Layout() {
           <div className="flex items-center">
             <NotebookTextIcon className="h-5 w-5 text-indigo-600" />
             <Link to="/" className="text-xl font-bold text-gray-800 ml-3">
-              ToT Selection Exam
+              Trainer Selection Exam
             </Link>
           </div>
 
@@ -47,6 +49,7 @@ export default function Layout() {
             <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
               Pdf
             </Link>
+            <Link to="instructions#helpdesk" className="text-gray-600 hover:text-blue-600 font-medium">Helpdesk</Link>
 
           </div>
 
@@ -106,13 +109,14 @@ export default function Layout() {
             <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
               Pdf
             </Link>
+            <Link to="instructions#helpdesk" className="text-gray-600 hover:text-blue-600 font-medium">Helpdesk</Link>
             
         </div>
       </div>
     </nav>
 
       {/* 📥 Content Area where child routes render */}
-      <main className="flex flex-col items-center w-full pt-12 pb-2 min-h-screen bg-slate-300">
+      <main className="flex flex-col items-center w-full pt-3 pb-3 min-h-screen bg-slate-300">
         <Outlet />
       </main>
 
