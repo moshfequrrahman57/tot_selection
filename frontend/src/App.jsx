@@ -12,6 +12,8 @@ import ProfileSummary from './components/ProfileSummary.jsx'
 import HomePage from './components/HomePage.jsx'
 import Profile from './components/Profile.jsx'
 import Pdf_Download from './components/Pdf_Download.jsx'
+import Helpdesk from './components/Helpdesk.jsx'
+import Helpdesk2 from './components/Helpdesk2.jsx'
 
 
 
@@ -27,7 +29,7 @@ function App() {
         {/* Parent route using the layout container */}
         <Route element={<Layout />}>
           {/* Redirect empty path straight to login */}
-          <Route path="/" element={<Navigate to="/instructions" replace />} />
+          <Route path="/" element={<Navigate to="/HomePage" replace />} />
           
           {/* Child pages that share the header */}
           <Route path="/login" element={<LoginPage />} />
@@ -39,6 +41,8 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/pdf' element={<Pdf_Download/>}/>
           <Route path="*" element={<LoginPage />} />
+          <Route path="/helpdesk" element={<Helpdesk/>} />
+          <Route path="/helpdesk2" element={<Helpdesk2/>} />
           
         </Route>
 

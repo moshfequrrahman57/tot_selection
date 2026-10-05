@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Phone } from 'lucide-react'; // Optional: install lucide-react for sharp icons
 import { Link, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'; 
 import { AuthContext } from './AuthContext';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,11 +13,16 @@ export default function LoginPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const { fetchUserProfile } = useContext(AuthContext); // ফাংশনটি আনুন
   const navigate=useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false); 
 
 const handleSubmit = async (e) => {
     e.preventDefault(); 
     setErrorMessage('');
     setSuccessMessage('');
+     setIsSubmitting(true); // সাবমিট প্রক্রিয়া শুরু হলে বাটন লক হবে
+    // একটি রানিং টোস্ট লোডার দেখাবে যা ব্যাকএন্ড রেসপন্স না পাওয়া পর্যন্ত স্ক্রিনে থাকবে
+    const loadingToast = toast.loading('Registering account...'); 
+
 
     try {
       
@@ -31,6 +37,8 @@ const handleSubmit = async (e) => {
       const data = await response.json();
 
       if (response.ok) {
+        toast.success('Login Successful!', { id: loadingToast });
+        
         setSuccessMessage('Login successful!');
         const token = data.token; // Assuming your backend returns a JWT token
         // OPTIONAL: If your API returns a JWT token or user data, save it here
@@ -38,20 +46,30 @@ const handleSubmit = async (e) => {
         console.log('Token saved to localStorage:', data.token);
         // 🌟 ম্যাজিক লাইন: এটি কল করার সাথে সাথে গ্লোবাল স্টেট আপডেট হবে
         await fetchUserProfile(token); 
-        navigate('/homepage');
+
+        setTimeout(() => {
+          navigate('/homepage'); // Redirect to homepage after successful login
+        }, 1500);
         console.log('Logged in user info:', data);
       } else {
         // Displays backend validation or database errors (e.g., "Invalid credentials")
         setErrorMessage(data.error || 'Login failed.');
+        toast.error(data.message || 'Login Failed', { id: loadingToast });
       }
     } catch (error) {
       console.error('Network Error:', error);
       setErrorMessage('Unable to connect to the server. Please check your network.');
+      toast.error('Could not connect to the server.', { id: loadingToast });
+      
+    }
+    finally {
+      setIsSubmitting(false); // সাবমিট প্রক্রিয়া শেষ হলে বাটন আনলক হবে
     }
   };
 
   return (
    <div className="flex min-h-screen w-full items-center justify-center  px-4  sm:px-6 lg:px-8 font-sans">
+    <Toaster position="top-center" reverseOrder={false} />
       <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10">
         
 
@@ -59,7 +77,7 @@ const handleSubmit = async (e) => {
         <div className="mx-auto w-full max-w-md my-auto py-12">
           <div className="mb-8">
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Welcome back
+              Login to Your Account
             </h1>
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             {successMessage && <p style={{color: 'green'}}>{successMessage}</p>}
@@ -142,12 +160,23 @@ const handleSubmit = async (e) => {
 
             {/* Primary Submit CTA */}
             <button
-              type="submit"
-              className="group flex w-full items-center justify-center gap-1.5 rounded-xl bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-100 transition-all duration-150 hover:bg-indigo-700 hover:shadow-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:scale-[0.99]"
-            >
-              Sign In
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </button>
+            type="submit"
+            disabled={isSubmitting} // সাবমিট হওয়ার সময় বাটন লক হয়ে যাবে
+            className="w-full flex items-center justify-center rounded-xl bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-100 outline-none transition-all duration-200 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-100 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              // বাটনের ভেতরের স্পিনার লোডার
+              <div className="flex items-center space-x-2">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Processing...</span>
+              </div>
+            ) : (
+              'Sign In'
+            )}
+          </button>
           </form>
 
         

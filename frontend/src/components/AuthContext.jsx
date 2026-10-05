@@ -11,6 +11,9 @@ export const AuthProvider = ({ children }) => {
   const fetchUserProfile = async (tokenParam=null) => {
     const token = tokenParam || localStorage.getItem('token');
     console.log('Fetching user profile with token from fetchUserProfile:', token);
+
+    await new Promise(resolve => setTimeout(resolve, 500)); 
+
     if (!token) {
       setUser(null);
       setLoading(false);
@@ -40,6 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+
     fetchUserProfile();
   }, []);
 

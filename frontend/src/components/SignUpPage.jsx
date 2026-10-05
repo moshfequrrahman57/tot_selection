@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Eye, EyeOff, Lock, User, Phone, MapPin, House, LandmarkIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'; 
 
 
 export default function SignUpPage() {
@@ -99,7 +99,8 @@ const BANGLADESH = {
   const [selectedDistrict, setSelectedDistrict]=useState("");
   const [selectedUpazila, setSelectedUpazila]=useState("");
   const [message, setMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -110,6 +111,11 @@ const BANGLADESH = {
    const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent standard page refresh
     console.log({...formData});
+    setIsSubmitting(true); // সাবমিট প্রক্রিয়া শুরু হলে বাটন লক হবে
+    // একটি রানিং টোস্ট লোডার দেখাবে যা ব্যাকএন্ড রেসপন্স না পাওয়া পর্যন্ত স্ক্রিনে থাকবে
+    const loadingToast = toast.loading('Registering account...'); 
+
+    
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
         method: 'POST',
@@ -124,13 +130,23 @@ const BANGLADESH = {
       if (response.ok) {
         setMessage('Registration Successful!');
         // Clear form values if needed
+        // লোডিং টোস্টটি পরিবর্তন হয়ে সাকসেস মেসেজ দেখাবে
+        toast.success('Registration Successful!', { id: loadingToast });
         setFormData({name: '',phone: '', division: '',district: '', upazila: '',institute: '',password: '',});
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500);
       } else {
         setMessage(data.message);
+        toast.error(data.message || 'Registration Failed', { id: loadingToast });
       }
     } catch (error) {
       console.error('Error connecting to API:', error);
+      toast.error('Could not connect to the server.', { id: loadingToast });
       setMessage('Could not connect to the server.');
+    }
+    finally {
+      setIsSubmitting(false); // সাবমিট প্রক্রিয়া শেষ হলে বাটন আনলক হবে
     }
   };
 
@@ -141,6 +157,8 @@ const BANGLADESH = {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center  px-4 sm:px-6 lg:px-8 font-sans">
+      <Toaster position="top-center" reverseOrder={false} />
+
       <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10">
         
         {/* Header Section */}
@@ -378,11 +396,24 @@ const BANGLADESH = {
           </div>
 
           {/* Submit Action Button */}
+          {/* Submit Button (লোডার এবং ডিজেবল লজিকসহ) */}
           <button
             type="submit"
-            className="w-full rounded-xl bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-100 transition-all duration-150 hover:bg-indigo-700 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            disabled={isSubmitting} // সাবমিট হওয়ার সময় বাটন লক হয়ে যাবে
+            className="w-full flex items-center justify-center rounded-xl bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-md shadow-indigo-100 outline-none transition-all duration-200 hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-100 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {isSubmitting ? (
+              // বাটনের ভেতরের স্পিনার লোডার
+              <div className="flex items-center space-x-2">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://w3.org" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Processing...</span>
+              </div>
+            ) : (
+              'Sign Up'
+            )}
           </button>
         </form>
 

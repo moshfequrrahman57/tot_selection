@@ -5,20 +5,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function InstructionPage() {
-const { hash } = useLocation();
 
-  // নেভবারের লিংকে ক্লিক করে এই পেজে আসলে স্বয়ংক্রিয়ভাবে নিচে স্ক্রল হবে
-  useEffect(() => {
-    if (hash) {
-      const element = document.getElementById(hash.replace('#', ''));
-      if (element) {
-        // scroll-mt (margin top) কাজ করার জন্য একটু সময় দিয়ে smooth স্ক্রল করানো হচ্ছে
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    }
-  }, [hash]);
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8 font-sans bg-slate-50 min-h-screen">
