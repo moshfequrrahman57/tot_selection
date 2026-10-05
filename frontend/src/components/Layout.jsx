@@ -65,7 +65,7 @@ export default function Layout() {
       <svg className="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      <span className="text-sm font-semibold text-gray-700 hidden md:block">{user.name}</span>
+      <span className="text-sm font-semibold text-gray-700 hidden md:block">{user?.name || "Not Logged In"}</span>
     </div>
   </Link>
 )}
@@ -131,7 +131,7 @@ export default function Layout() {
             Exam Panel
           </Link>
             <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
-            {user ? (<h4>{user.name}</h4>):(<h4>Not Log In</h4>)}
+            {user ? (<h4>{user.name}</h4>):(<h4>Not Logged In</h4>)}
             </Link>
             <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
               Pdf

@@ -38,7 +38,7 @@ function App() {
           <Route path='/homepage' element={<HomePage/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/pdf' element={<Pdf_Download/>}/>
-          <Route path="*" element={<LoginPage />} />
+          <Route path="*" element={<Navigate to="/instructions" replace />} />
           <Route path="/helpdesk" element={<Helpdesk/>} />
           <Route path="/helpdesk2" element={<Helpdesk2/>} />
           
