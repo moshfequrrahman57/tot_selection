@@ -1,6 +1,6 @@
 import React from 'react';
 import { BookOpen, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, HelpCircle } from 'lucide-react';
-import Helpdesk from './HelpDesk';
+import Helpdesk from './Helpdesk';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 

@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Phone } from 'lucide-react'; // Optional: install lucide-react for sharp icons
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import process from 'process';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [credentials, setCredentials] = useState({
