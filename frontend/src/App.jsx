@@ -16,8 +16,6 @@ import Helpdesk from './components/Helpdesk.jsx'
 import Helpdesk2 from './components/Helpdesk2.jsx'
 
 
-
-
 function App() {
   const [count, setCount] = useState(0)
 
@@ -29,7 +27,7 @@ function App() {
         {/* Parent route using the layout container */}
         <Route element={<Layout />}>
           {/* Redirect empty path straight to login */}
-          <Route path="/" element={<Navigate to="/HomePage" replace />} />
+          <Route path="/" element={<Navigate to="/instructions" replace />} />
           
           {/* Child pages that share the header */}
           <Route path="/login" element={<LoginPage />} />

@@ -14,8 +14,6 @@ export default function Layout() {
   if (loading) return (
     <Loader/>
   )
-  
- 
     
   return (
     <div className="flex min-h-screen w-full flex-col bg-slate-50">
@@ -27,16 +25,11 @@ export default function Layout() {
           {/* Logo */}
           <div className="flex items-center">
             <NotebookTextIcon className="h-5 w-5 text-indigo-600" />
-           {user && (
              <Link to="/" className="text-xl font-bold text-gray-800 ml-3">
               Trainer Selection Exam
             </Link>
-           )}
-           {!user && (
-             <Link to="/instructions" className="text-xl font-bold text-gray-800 ml-3">
-              Trainer Selection Exam
-            </Link>
-           )}
+           
+           
           </div>
 
           {/* Desktop Navigation Links */}
@@ -50,16 +43,14 @@ export default function Layout() {
                 <Link to="/login" className="text-gray-600 hover:text-blue-600 font-medium">
                   Log In
                 </Link>
-                <Link to="/instructions" className="text-gray-600 hover:text-blue-600 font-medium">
-              Instructions
-            </Link>
+               
               </>
             )}
-            {user && (
-              <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium">
+            
+              <Link to="/instructions" className="text-gray-600 hover:text-blue-600 font-medium">
               Instructions
             </Link>
-            )}
+
             <Link to="/exam" className="text-gray-600 hover:text-blue-600 font-medium">
               Exam Panel
             </Link>
@@ -129,16 +120,13 @@ export default function Layout() {
               <Link to="/login" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
                 Log In
               </Link>
-              <Link to="/instructions" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
-            Instructions
-          </Link>
+              
             </>
           )}
-          {user && (
-            <Link to="/" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
+            <Link to="/instructions" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
             Instructions
           </Link>
-          )}
+
           <Link to="/exam" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
             Exam Panel
           </Link>

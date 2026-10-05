@@ -1,11 +1,22 @@
 import React from 'react';
 import { BookOpen, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, HelpCircle } from 'lucide-react';
 import Helpdesk from './Helpdesk';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+
+import { AuthContext } from './AuthContext';
+import Loader from './Loader';
+import HomePage from './HomePage';
 
 export default function InstructionPage() {
 
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return (
+    <Loader/>
+  )
+  if(user){
+    return (<HomePage/>)
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8 font-sans bg-slate-50 min-h-screen">
@@ -28,8 +39,7 @@ export default function InstructionPage() {
         {/* বাম/মূল কলাম: ধাপসমূহ এবং নিয়মাবলী */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* সেকশন ১: পর্যায়ক্রমিক ধাপসমূহ (Sequential Steps) */}
-          <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+         <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <div className="flex items-center gap-2.5 mb-6">
               <BookOpen className="h-5 w-5 text-indigo-600" />
               <h2 className="text-xl font-bold text-slate-900"> নিবন্ধন প্রক্রিয়া</h2>
@@ -95,6 +105,7 @@ export default function InstructionPage() {
               </li>
             </ol>
           </section>
+         
 
           {/* সেকশন ২: গুরুত্বপূর্ণ নিয়মাবলী (Critical Rules) */}
           <section className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
