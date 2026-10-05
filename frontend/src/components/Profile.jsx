@@ -13,10 +13,6 @@ const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('isQuizVerified');
 
-    // 2. Clear the global React Auth state so the UI updates instantly
-    if (setUser) {
-      setUser(null);
-    }
 
     // 3. Kick the user out to the login page
     // Using { replace: true } prevents them from clicking the browser's "Back" button to return
