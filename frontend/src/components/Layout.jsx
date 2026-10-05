@@ -131,7 +131,7 @@ export default function Layout() {
             Exam Panel
           </Link>
             <Link to="/profile" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
-            {user ? (<h4>{user.name}</h4>):(<h4>Not Logged In</h4>)}
+            {user?.name || "Not Logged In"}
             </Link>
             <Link to="/pdf" className="text-gray-600 hover:text-blue-600 font-medium">
               Pdf
