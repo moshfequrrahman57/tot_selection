@@ -24,9 +24,9 @@ if(loading) return <p> Loading profile.....</p>
 
     return(
        <>
-  <div className="w-full max-w-xl mx-auto my-10 p-5 sm:p-6 bg-white rounded-xl shadow-lg border border-gray-100 font-sans">
-    
-    <div className="flex items-center justify-between border-b pb-4 mb-6">
+  <div className="w-full p-3 md:p-5   ">
+    <div className="bg-amber-100 p-3 md:p-5 rounded-xl shadow-lg border border-gray-100 font-sans">
+      <div className="flex items-center justify-between border-b pb-4 mb-6">
       <h2 className="text-xl sm:text-2xl font-bold text-gray-800">User Profile</h2>
       <button 
         onClick={handleLogout}
@@ -58,6 +58,8 @@ if(loading) return <p> Loading profile.....</p>
       </p>
     </div>
 
+    </div>
+    
   </div>
 
 

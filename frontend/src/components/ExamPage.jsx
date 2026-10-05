@@ -3,9 +3,8 @@ import { AuthContext } from './AuthContext'; // Path to your AuthContext
 import QuestionList from './QuestionList';     // Path to your QuestionList component
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
-import Pdf_Download from './Pdf_Download';
-import CheatChecker from './CheatChecker';
-import ScreenProtector from './security_page/ScreenProtector';
+import LoginPrompt from './LumSumPage/LoginPrompt';
+
 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
@@ -89,7 +88,7 @@ const ExamPage = () => {
 
 // প্রোফাইল লোড শেষ হওয়ার (authLoading = false) ঠিক পর পরই চেক হবে ইউজার আসলেই লগইনড কিনা 
 if (!user) {
-  return <div className="text-center py-10">কুইজে অংশ নিতে আগে লগইন করুন।</div>; 
+  return <LoginPrompt/>; 
 
 }
   if (!isVerified) {
@@ -99,7 +98,7 @@ if (!user) {
   //   return <Pdf_Download sub_data={submittedData}/>
   // }
   return (
-    <ScreenProtector>
+   
     <div className="min-h-screen bg-slate-50 py-10 px-4 max-w-2xl mx-auto space-y-6">
       
       {/* 🟢 Status Banner if any error/success happens */}
@@ -123,7 +122,7 @@ if (!user) {
       <QuestionList onAnswerChange={handleAnswersChange} />
       
     </div>
-    </ScreenProtector>
+   
   );
 };
 

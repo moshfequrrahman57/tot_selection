@@ -115,9 +115,9 @@ const handleSubmit = async (e) => {
                 <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
                   Password
                 </label>
-                <a href="#forgot" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
+                <Link to="/helpdesk2" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 transition-colors">
                   Forgot password?
-                </a>
+                </Link>
               </div>
               <div className="relative rounded-xl shadow-sm">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
@@ -145,18 +145,7 @@ const handleSubmit = async (e) => {
               </div>
             </div>
 
-            {/* Remember Me Option */}
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600 selection:bg-transparent">
-                Keep me signed in for 30 days
-              </label>
-            </div>
+          
 
             {/* Primary Submit CTA */}
             <button
