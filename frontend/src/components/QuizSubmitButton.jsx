@@ -1,16 +1,10 @@
 import React from 'react';
 import {useState, useRef, useEffect} from 'react';
-import { useLocation } from 'react-router-dom';
 const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isActive }) => {
   
     const [timeSpent, setTimeSpent] = useState(0); // ০ থেকে সময় গণনা শুরু হবে
     const timerRef = useRef(null);
-    const location=useLocation();
 
-    useEffect(()=>{
-      console.log("Location Changed",location.pathname);
-      
-    },location)
     
     useEffect(() => {
         if (!isActive) return;

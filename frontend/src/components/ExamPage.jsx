@@ -4,7 +4,7 @@ import QuestionList from './QuestionList';     // Path to your QuestionList comp
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
 import LoginPrompt from './LumSumPage/LoginPrompt';
-
+import { useBlocker } from 'react-router-dom';
 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
@@ -25,6 +25,11 @@ const ExamPage = () => {
   });
   const [submittedData, setSubmittedData] = useState(null);
   const [isActive, setIsActive] = useState(false); 
+  
+   let blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isActive && currentLocation.pathname !== nextLocation.pathname
+  );
 
   const handleVerificationSuccessful= ()=>{
     setIsVerified(true);
@@ -104,6 +109,18 @@ if (!user) {
   return (
    
     <div className="min-h-screen bg-slate-50 py-10 px-4 max-w-2xl mx-auto space-y-6">
+
+      <div>
+      <h1>পরীক্ষা চলছে...</h1>
+      
+      {/* ব্যাক বাটন চাপলে এই অ্যালার্ট বা মডাল শো করবে */}
+      {blocker.state === "blocked" && (
+        <div className="custom-modal">
+          <p>পরীক্ষা চলাকালীন আপনি ব্যাক বাটন চেপে বের হতে পারবেন না!</p>
+          <button onClick={() => blocker.reset()}>পরীক্ষায় ফিরে যান</button>
+        </div>
+      )}
+    </div>
       
       {/* 🟢 Status Banner if any error/success happens */}
       {statusMessage.text && (
