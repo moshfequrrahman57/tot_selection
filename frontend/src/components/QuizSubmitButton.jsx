@@ -48,7 +48,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
     if (message) {
       setTimeout(() => {
         alert(message);
-      }, 50);
+      }, 0);
     }
   };
 
@@ -58,7 +58,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
 
     timerRef.current = setInterval(() => {
       setTimeSpent((prevTime) => {
-        if (prevTime >= 59) { 
+        if (prevTime >= 10) { 
           clearInterval(timerRef.current);
           handleQuizSubmit("আপনার পরীক্ষার নির্ধারিত সময় শেষ। উত্তর অটোমেটিক সাবমিট করা হচ্ছে।");
           return 0; 
@@ -92,7 +92,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
             Answered Question: <span className="font-semibold text-indigo-600 text-sm">{totalAnswered}</span> 
           </p>
           <p className="text-xs text-slate-500 mt-0.5">
-            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /60s
+            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /10s
           </p>
         </div>
       </div>

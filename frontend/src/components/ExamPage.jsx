@@ -21,6 +21,8 @@ const answersRef = useRef(selectedAnswers);
 useEffect(() => {
   answersRef.current = selectedAnswers;
 }, [selectedAnswers]);
+
+
   const [submitted, setSubmitted] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   // স্টেট ইনিশিয়ালাইজ করার সময় localStorage চেক করা হচ্ছে
