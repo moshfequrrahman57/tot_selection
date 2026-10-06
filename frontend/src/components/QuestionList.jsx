@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-const QuestionList = ({onAnswerChange}) => {
+const QuestionList = ({onAnswerChange, currentAnswers}) => {
   // স্টেট ম্যানেজমেন্ট
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   // ব্যবহারকারীর সিলেক্ট করা উত্তর জমা রাখার স্টেট (e.g., { [questionId]: 'option_b' })
-  const [selectedAnswers, setSelectedAnswers] = useState(() => {
-    const savedAnswers = localStorage.getItem('exam_answers');
-    return savedAnswers ? JSON.parse(savedAnswers) : {};
-  });
-    console.log("Selected Answers State:", selectedAnswers);
+  const [selectedAnswers, setSelectedAnswers] = useState(currentAnswers || {});
+    console.log("Selected Answers State from question list:", selectedAnswers);
 
   // API থেকে ডেটা ফেচ করা
   useEffect(() => {

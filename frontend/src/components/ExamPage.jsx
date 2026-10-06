@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useRef,useEffect } from 'react';
 import { AuthContext } from './AuthContext'; // Path to your AuthContext
 import QuestionList from './QuestionList';     // Path to your QuestionList component
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
@@ -16,6 +16,11 @@ const ExamPage = () => {
     const savedAnswers = localStorage.getItem('exam_answers');
     return savedAnswers ? JSON.parse(savedAnswers) : {};
   });
+  // 🎯 এটি যোগ করুন: selectedAnswers এর লেটেস্ট মান ট্র্যাক করার জন্য Ref
+const answersRef = useRef(selectedAnswers);
+useEffect(() => {
+  answersRef.current = selectedAnswers;
+}, [selectedAnswers]);
   const [submitted, setSubmitted] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   // স্টেট ইনিশিয়ালাইজ করার সময় localStorage চেক করা হচ্ছে
@@ -23,7 +28,7 @@ const ExamPage = () => {
     const savedStatus = localStorage.getItem('isQuizVerified');
     return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
   });
-  const [submittedData, setSubmittedData] = useState(null);
+  
   const [isActive, setIsActive] = useState(false); 
   
    let blocker = useBlocker(
@@ -58,7 +63,7 @@ const ExamPage = () => {
     const { name, phone, division, district, upazila, institute } = user;
     console.log(name,phone,division,district,upazila,institute);
     const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
-
+    console.log("Answers:   ",selectedAnswers);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/submit-quiz`, {
         method: 'POST',
@@ -72,17 +77,17 @@ const ExamPage = () => {
           district: district,
           upazila: upazila,
           institute: institute,
-          answers: selectedAnswers
+          answers: answersRef.current
         })
       });
-
+      
       const result = await response.json();
 
       if (!response.ok) throw new Error(result.error || 'Submission failed');
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
       const finalData= {...user, answers:selectedAnswers};
-      setSubmittedData(finalData);
+      setSelectedAnswers(finalData);
       
 
     } catch (err) {
@@ -103,9 +108,7 @@ if (!user) {
   if (!isVerified) {
     return <VerifyQuizCode onVerificationSuccess={handleVerificationSuccessful } />;
   }
-  // if(submittedData){
-  //   return <Pdf_Download sub_data={submittedData}/>
-  // }
+ 
   return (
    
     <div className="min-h-screen bg-slate-50 py-10 px-4 max-w-2xl mx-auto space-y-6">
@@ -140,7 +143,7 @@ if (!user) {
 
       {/* 🟢 QUESTION LIST COMPONENT */}
       {/* Pass handleAnswersChange down so it can report answers back up */}
-      <QuestionList onAnswerChange={handleAnswersChange} />
+      <QuestionList onAnswerChange={handleAnswersChange} currentAnswers={selectedAnswers} />
       
     </div>
    
