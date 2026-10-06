@@ -12,6 +12,7 @@ const handleLogout = () => {
     // 1. Wipe the JWT token completely from the browser
     localStorage.removeItem('token');
     localStorage.removeItem('isQuizVerified');
+    localStorage.removeItem('exam_answers');
 
 
     // 3. Kick the user out to the login page

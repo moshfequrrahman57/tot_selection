@@ -7,7 +7,10 @@ const QuestionList = ({onAnswerChange}) => {
   const [error, setError] = useState(null);
   
   // ব্যবহারকারীর সিলেক্ট করা উত্তর জমা রাখার স্টেট (e.g., { [questionId]: 'option_b' })
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState(() => {
+    const savedAnswers = localStorage.getItem('exam_answers');
+    return savedAnswers ? JSON.parse(savedAnswers) : {};
+  });
     console.log("Selected Answers State:", selectedAnswers);
 
   // API থেকে ডেটা ফেচ করা
@@ -40,9 +43,23 @@ const QuestionList = ({onAnswerChange}) => {
     fetchQuestions();
   }, []);
 
+  // Automatically save to local storage whenever answers change
+useEffect(() => {
+  localStorage.setItem('exam_answers', JSON.stringify(selectedAnswers));
+}, [selectedAnswers]);
+
+
   // অপশন ক্লিক হ্যান্ডলার
   const handleOptionSelect = (questionId, optionKey) => {
-    const updatedAnswers = {...selectedAnswers,[questionId]: optionKey};
+    const updatedAnswers ={...selectedAnswers}
+
+   if (updatedAnswers[questionId] === optionKey) {
+    // যদি আগের সিলেক্ট করা অপশনেই আবার ক্লিক করা হয়, তবে Deselect হবে
+    delete updatedAnswers[questionId];
+  } else {
+    // অন্যথায় নতুন অপশনটি Select হবে
+    updatedAnswers[questionId] = optionKey;
+  }
     setSelectedAnswers(updatedAnswers);
     if(onAnswerChange){
       onAnswerChange(updatedAnswers);

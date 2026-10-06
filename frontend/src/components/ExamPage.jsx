@@ -11,7 +11,11 @@ const ExamPage = () => {
   const { user, loading: authLoading } = useContext(AuthContext);
   
   // 2. State to hold answers bubble up from QuestionList
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  // const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState(() => {
+    const savedAnswers = localStorage.getItem('exam_answers');
+    return savedAnswers ? JSON.parse(savedAnswers) : {};
+  });
   const [submitted, setSubmitted] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   // স্টেট ইনিশিয়ালাইজ করার সময় localStorage চেক করা হচ্ছে
