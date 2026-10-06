@@ -154,12 +154,19 @@ const BANGLADESH = {
   useEffect(()=>{
    // console.log({...formData});
   },[formData])
+  {
+    /*
+
+    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+   */
+  }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center  px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="  md:min-w-full  px-4 sm:px-6 lg:px-8 font-sans">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10">
+      <div className="w-full max-w-md mx-auto rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10">
         
         {/* Header Section */}
         <div className="text-center mb-8">

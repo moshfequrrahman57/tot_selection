@@ -61,7 +61,7 @@ export default function Layout() {
             {user && (
   <Link to="/profile" className='text-gray-600 hover:text-indigo-600 font-medium flex items-center'>
     <div className="flex items-center md:space-x-2 md:bg-slate-100 space-x-3 md:py-1.5 md:px-3 rounded-full hover:bg-indigo-50 transition-colors">
-      <svg className="h-7 w-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg className="h-7 w-7 text-red-600 " fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <span className="text-sm font-semibold text-gray-700 hidden md:block">{user?.name || "Not Logged In"}</span>
