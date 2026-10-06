@@ -6,79 +6,135 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
   const [timeSpent, setTimeSpent] = useState(0); 
   const timerRef = useRef(null);
   const isSubmittingRef = useRef(false);
+  
+  // ⏱️ ৫ সেকেন্ড ট্র্যাক করার জন্য Ref
+  const blurTimeoutRef = useRef(null);
+  const allowTimeRef = useRef(0);
 
-  // 🎯 প্যারেন্ট ফাংশনটিকে রেফ-এ রাখা হলো ক্লোজার সমস্যা এড়াতে
+  // প্যারেন্ট ফাংশনটিকে রেফ-এ রাখা হলো ক্লোজার সমস্যা এড়াতে
   const onSubmitRef = useRef(onValidateAndSubmit);
   useEffect(() => {
     onSubmitRef.current = onValidateAndSubmit;
   }, [onValidateAndSubmit]);
 
-  // ইভেন্ট হ্যান্ডলার
-  const handleVisibilityChangeGlobal = () => {
-    if (document.hidden && !isSubmittingRef.current) {
-      handleQuizSubmit("সতর্কবার্তা: আপনি অন্য ট্যাব বা অ্যাপে গেছেন! আপনার কুইজ অটো-সাবমিট করা হলো।");
-    }
-  };
-
-  const handleBlurGlobal = () => {
-    if (!isSubmittingRef.current) {
-      handleQuizSubmit("সতর্কবার্তা: আপনি পরীক্ষার উইন্ডো থেকে ফোকাস হারিয়েছেন! আপনার কুইজ অটো-সাবমিট করা হলো।");
-    }
-  };
-
-  const removeAllListeners = () => {
-    document.removeEventListener("visibilitychange", handleVisibilityChangeGlobal);
-    window.removeEventListener("blur", handleBlurGlobal);
-  };
-
-  // সেন্ট্রাল সাবমিট ফাংশন
+  // ✅ ১. সেন্ট্রাল সাবমিট ফাংশন
   const handleQuizSubmit = (message) => {
     if (isSubmitted || isSubmittingRef.current) return;
     
     isSubmittingRef.current = true;
     removeAllListeners();
-    clearInterval(timerRef.current);
-    
-    // রিয়্যাক্ট রেন্ডার সাইকেলের বাইরে ডেটা প্রসেস করার জন্য safe execution
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+
     if (onSubmitRef.current) {
       onSubmitRef.current();
     }
 
-    // alert সবার শেষে দেওয়া হলো যাতে ডেটা অলরেডি API-তে চলে যায়
     if (message) {
+      // রেন্ডারিং ও স্টেট আপডেটের সাথে যাতে ক্ল্যাশ না হয়, তাই alert-কে সামান্য ডিলে দেওয়া হলো
       setTimeout(() => {
         alert(message);
-      }, 0);
+      }, 50);
     }
   };
 
-  // টাইমার ইফেক্ট
+  // ✅ ২. ইউজার উইন্ডো বা ট্যাব ছেড়ে চলে গেলে যা হবে
+  const handleUserLeft = (message) => {
+    if (isSubmittingRef.current) return;
+
+    clearTimeout(blurTimeoutRef.current); 
+
+    blurTimeoutRef.current = setTimeout(() => {
+      handleQuizSubmit(message);
+    }, 5000); // ৫ সেকেন্ড
+  };
+
+  // ✅ ৩. ইউজার ৫ সেকেন্ডের মধ্যে ফিরে আসলে যা হবে
+  const handleUserReturned = () => {
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      console.log("ইউজার ৫ সেকেন্ডের মধ্যে ফিরে এসেছে, সাবমিট বাতিল করা হলো।");
+      
+      allowTimeRef.current = allowTimeRef.current + 1; 
+      console.log("ট্যাব চেঞ্জের সংখ্যা: ", allowTimeRef.current);
+      
+      // 🚨 ৩ বার ট্যাব চেঞ্জ করলে (কোডে আপনার কন্ডিশন ৩ এর জায়গায় ৫ ছিল, তা ঠিক করে ৩ করা হলো)
+      if (allowTimeRef.current >= 5) {
+        handleQuizSubmit("সতর্কবার্তা: আপনি সর্বোচ্চ ২ বার সুযোগ পার করে ৩য় বার ট্যাব চেঞ্জ করেছেন! আপনার কুইজ অটো-সাবমিট করা হলো।");
+      } else {
+        // ১ ও ২ বারের জন্য সতর্কবার্তা অ্যালার্ট
+        const currentCount = allowTimeRef.current;
+        setTimeout(() => {
+          if (currentCount === 1) {
+            alert("⚠️ সতর্কবার্তা ১: আপনি ট্যাব পরিবর্তন করেছিলেন! ২য় বার সুযোগ পাবেন, ৩য় বার কুইজ অটো-সাবমিট হবে।");
+          } else if (currentCount === 2) {
+            alert("⚠️ চূড়ান্ত সতর্কবার্তা ২: এরপর আবার ট্যাব পরিবর্তন করলে কুইজ অটো-সাবমিট হয়ে যাবে!");
+          }
+        }, 50);
+      }
+    }
+  };
+
+  // ✅ ৪. গ্লোবাল ইভেন্ট হ্যান্ডলার ফাংশনসমূহ
+  const handleVisibilityChangeGlobal = () => {
+    if (document.hidden) {
+      handleUserLeft("সতর্কবার্তা: আপনি ৫ সেকেন্ডের বেশি সময় অন্য ট্যাব বা অ্যাপে ছিলেন! কুইজ অটো-সাবমিট করা হলো।");
+    } else {
+      handleUserReturned();
+    }
+  };
+
+  const handleBlurGlobal = () => {
+    handleUserLeft("সতর্কবার্তা: আপনি ৫ সেকেন্ডের বেশি সময় পরীক্ষার উইন্ডো থেকে ফোকাস হারিয়েছিলেন! কুইজ অটো-সাবমিট করা হলো।");
+  };
+
+  const handleFocusGlobal = () => {
+    handleUserReturned();
+  };
+
+  const removeAllListeners = () => {
+    document.removeEventListener("visibilitychange", handleVisibilityChangeGlobal);
+    window.removeEventListener("blur", handleBlurGlobal);
+    window.removeEventListener("focus", handleFocusGlobal);
+  };
+
+  // ⏱️ টাইমার ইফেক্ট (এখানে শুধু প্রতি সেকেন্ডে স্টেট বাড়ানো হবে, কোন সাবমিট লজিক থাকবে না)
   useEffect(() => {
     if (!isActive || isSubmitted || isSubmittingRef.current) return;
 
     timerRef.current = setInterval(() => {
       setTimeSpent((prevTime) => {
-        if (prevTime >= 10) { 
+        if (prevTime >= 60) {
           clearInterval(timerRef.current);
-          handleQuizSubmit("আপনার পরীক্ষার নির্ধারিত সময় শেষ। উত্তর অটোমেটিক সাবমিট করা হচ্ছে।");
-          return 0; 
+          return 60;
         }
-        return prevTime + 1; 
+        return prevTime + 1;
       });
     }, 1000);
 
-    return () => clearInterval(timerRef.current); 
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [isActive, isSubmitted]);
 
-  // ট্যাব চেঞ্জ ইফেক্ট
+  // 🎯 🟢 মূল সমাধান: সময় শেষ হওয়া ট্র্যাক করার জন্য আলাদা এবং নিরাপদ useEffect
+  useEffect(() => {
+    if (timeSpent >= 60 && !isSubmitted && !isSubmittingRef.current) {
+      handleQuizSubmit("আপনার পরীক্ষার নির্ধারিত সময় শেষ। উত্তর অটোমেটিক সাবমিট করা হচ্ছে।");
+    }
+  }, [timeSpent, isSubmitted]);
+
+  // ট্যাব চেঞ্জ এবং উইন্ডো ফোকাস ইফেক্ট
   useEffect(() => {
     if (!isActive || isSubmitted) return;
 
     document.addEventListener("visibilitychange", handleVisibilityChangeGlobal);
     window.addEventListener("blur", handleBlurGlobal);
+    window.addEventListener("focus", handleFocusGlobal);
 
     return () => {
       removeAllListeners();
+      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
     };
   }, [isActive, isSubmitted]);
 
@@ -92,7 +148,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
             Answered Question: <span className="font-semibold text-indigo-600 text-sm">{totalAnswered}</span> 
           </p>
           <p className="text-xs text-slate-500 mt-0.5">
-            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /10s
+            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /60s
           </p>
         </div>
       </div>

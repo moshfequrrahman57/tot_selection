@@ -46,6 +46,7 @@ useEffect(() => {
 
   // Callback to receive answers from QuestionList child component
   const handleAnswersChange = (answers) => {
+    console.log("Answers from Exam page:  ", answers);
     setSelectedAnswers(answers);
   };
 
@@ -88,14 +89,14 @@ useEffect(() => {
       if (!response.ok) throw new Error(result.error || 'Submission failed');
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
-      const finalData= {...user, answers:selectedAnswers};
-      setSelectedAnswers(finalData);
+      localStorage.removeItem('exam_answers');
+      localStorage.removeItem('isQuizVerified');
       
 
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.message });
     } finally {
-      setSubmitted(false);
+      
     }
   };
   

@@ -91,7 +91,7 @@ useEffect(() => {
         {/* হেডার সেকশন */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
-            অনলাইন কুইজ (রেডিস) 
+            অনলাইন কুইজ 
           </h1>
           <p className="mt-2 text-sm text-slate-600">
             নিচের প্রশ্নগুলোর সঠিক উত্তরটি নির্বাচন করুন।
