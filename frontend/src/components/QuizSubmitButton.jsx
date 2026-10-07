@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
-
+import toast, { Toaster } from 'react-hot-toast'; 
 const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isActive }) => {
   
   const [timeSpent, setTimeSpent] = useState(0); 
@@ -23,8 +23,14 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
     
     isSubmittingRef.current = true;
     removeAllListeners();
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
 
     if (onSubmitRef.current) {
       onSubmitRef.current();
@@ -33,7 +39,11 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
     if (message) {
       // রেন্ডারিং ও স্টেট আপডেটের সাথে যাতে ক্ল্যাশ না হয়, তাই alert-কে সামান্য ডিলে দেওয়া হলো
       setTimeout(() => {
-        alert(message);
+        toast.dismiss();
+        toast.error(message, {
+          duration: 4000,
+          position: 'top-center',
+        });
       }, 50);
     }
   };
@@ -42,7 +52,10 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
   const handleUserLeft = (message) => {
     if (isSubmittingRef.current) return;
 
-    clearTimeout(blurTimeoutRef.current); 
+    if (blurTimeoutRef.current) {
+      clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
+    }
 
     blurTimeoutRef.current = setTimeout(() => {
       handleQuizSubmit(message);
@@ -53,22 +66,31 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
   const handleUserReturned = () => {
     if (blurTimeoutRef.current) {
       clearTimeout(blurTimeoutRef.current);
+      blurTimeoutRef.current = null;
       console.log("ইউজার ৫ সেকেন্ডের মধ্যে ফিরে এসেছে, সাবমিট বাতিল করা হলো।");
       
       allowTimeRef.current = allowTimeRef.current + 1; 
       console.log("ট্যাব চেঞ্জের সংখ্যা: ", allowTimeRef.current);
       
-      // 🚨 ৩ বার ট্যাব চেঞ্জ করলে (কোডে আপনার কন্ডিশন ৩ এর জায়গায় ৫ ছিল, তা ঠিক করে ৩ করা হলো)
-      if (allowTimeRef.current >= 5) {
+      // 🚨 ৩ বার ট্যাব চেঞ্জ করলে (৩য় বার কুইজ অটো-সাবমিট)
+      if (allowTimeRef.current >= 3) {
         handleQuizSubmit("সতর্কবার্তা: আপনি সর্বোচ্চ ২ বার সুযোগ পার করে ৩য় বার ট্যাব চেঞ্জ করেছেন! আপনার কুইজ অটো-সাবমিট করা হলো।");
       } else {
         // ১ ও ২ বারের জন্য সতর্কবার্তা অ্যালার্ট
         const currentCount = allowTimeRef.current;
         setTimeout(() => {
+          toast.dismiss();
           if (currentCount === 1) {
-            alert("⚠️ সতর্কবার্তা ১: আপনি ট্যাব পরিবর্তন করেছিলেন! ২য় বার সুযোগ পাবেন, ৩য় বার কুইজ অটো-সাবমিট হবে।");
+            toast('⚠️ সতর্কবার্তা ১: আপনি ট্যাব পরিবর্তন করেছিলেন! ২য় বার সুযোগ পাবেন, ৩য় বার কুইজ অটো-সাবমিট হবে।', {
+              duration: 5000,
+              position: 'top-center',
+              style: { background: '#FFF3CD', color: '#856404', fontWeight: 'bold' }
+            });
           } else if (currentCount === 2) {
-            alert("⚠️ চূড়ান্ত সতর্কবার্তা ২: এরপর আবার ট্যাব পরিবর্তন করলে কুইজ অটো-সাবমিট হয়ে যাবে!");
+            toast.error('⚠️ চূড়ান্ত সতর্কবার্তা ২: এরপর আবার ট্যাব পরিবর্তন করলে কুইজ অটো-সাবমিট হয়ে যাবে!', {
+              duration: 5000,
+              position: 'top-center',
+            });
           }
         }, 50);
       }
@@ -134,13 +156,22 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
 
     return () => {
       removeAllListeners();
-      if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current);
+      if (blurTimeoutRef.current) {
+        clearTimeout(blurTimeoutRef.current);
+        blurTimeoutRef.current = null;
+      }
     };
   }, [isActive, isSubmitted]);
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-4 z-10">
-      <div>
+    <>
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
+        containerStyle={{ zIndex: 99999 }}
+      />
+      <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 sticky top-4 z-10">
+        <div>
         <h4 className="font-bold text-slate-800 text-sm sm:text-base">কুইজ অগ্রগতি (Quiz Progress)</h4>
         
         <div className="flex items-center space-x-4 mx-1 sm:mx-0 ">
@@ -162,6 +193,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
         {isSubmitted ? 'জমা হয়েছে...' : 'কুইজ সাবমিট করুন'}
       </button>
     </div>
+    </>
   );
 };
 

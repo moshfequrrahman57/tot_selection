@@ -21,7 +21,7 @@ const handleSubmit = async (e) => {
     setSuccessMessage('');
      setIsSubmitting(true); // সাবমিট প্রক্রিয়া শুরু হলে বাটন লক হবে
     // একটি রানিং টোস্ট লোডার দেখাবে যা ব্যাকএন্ড রেসপন্স না পাওয়া পর্যন্ত স্ক্রিনে থাকবে
-    const loadingToast = toast.loading('Registering account...'); 
+    const loadingToast = toast.loading('Logging account...'); 
 
 
     try {
@@ -69,7 +69,7 @@ const handleSubmit = async (e) => {
 
   return (
    <div className="md:min-w-full  px-4 sm:px-6 md:py-10 font-sans">
-    <Toaster position="top-center" reverseOrder={false} />
+    <Toaster position="top-center" reverseOrder={false} containerStyle={{ zIndex: 99999 }} />
       <div className=" w-full max-w-md mx-auto  rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10">
         
 
