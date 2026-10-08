@@ -42,6 +42,45 @@ admin_route.post('/secret', async (req, res)=>{
     }
 })
 
+admin_route.delete('/user/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'ইউজার খুঁজে পাওয়া যায়নি' });
+        }
+        res.json({ success: true, message: 'ইউজার সফলভাবে মুছে ফেলা হয়েছে', deletedUser: result.rows[0] });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error - delete user");
+    }
+});
+
+admin_route.get('/user-answers', async (req, res) => {
+    try {
+        const userData = await pool.query('SELECT * FROM user_answers ORDER BY id DESC');
+        res.json({ message: "Success", users: userData.rows });
+    } catch (err) {
+        console.log(err.message);
+        // Fallback or handle missing table if user_answers doesn't exist yet
+        res.status(500).json({ error: "Server Error - admin user-answers" });
+    }
+});
+
+admin_route.delete('/user-answers/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query('DELETE FROM user_answers WHERE id = $1 RETURNING *', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'উত্তর খুঁজে পাওয়া যায়নি' });
+        }
+        res.json({ success: true, message: 'উত্তর সফলভাবে মুছে ফেলা হয়েছে', deletedUser: result.rows[0] });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Server Error - delete user answer");
+    }
+});
+
 export default admin_route;
 
 

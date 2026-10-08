@@ -23,6 +23,7 @@ import Helpdesk2 from './components/Helpdesk2.jsx';
 import AdminLayout from './components/admin/AdminLayout.jsx';
 import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import AdminUsers from './components/admin/AdminUsers.jsx';
+import UsersAnswers from './components/admin/UsersAnswers.jsx';
 
 // createBrowserRouter Configuration with Separate Routers/Layouts
 const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <AdminUsers />
+      },
+      {
+        path: "answers",
+        element: <UsersAnswers />
       },
       {
         path: "*",

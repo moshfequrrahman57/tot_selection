@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Users, Search, RefreshCw, AlertCircle, ArrowLeft, Eye, X, 
   User, Phone, MapPin, Building, Calendar, Trash2, Filter, 
-  ChevronLeft, ChevronRight 
+  ChevronLeft, ChevronRight, FileText, CheckCircle2 
 } from 'lucide-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { BANGLADESH } from '../../data/locations';
 
-export default function AdminUsers() {
+export default function UsersAnswers() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -21,21 +21,24 @@ export default function AdminUsers() {
   const ITEMS_PER_PAGE = 50;
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:6001';
 
-  const fetchUsers = async () => {
+  const fetchUserAnswers = async () => {
     setLoading(true);
     setError('');
-    try {
-      const response = await axios.get(`${API_URL}/admin/user`);
-      setUsers(response.data?.users || []);
+    
+      // Try user-answers endpoint first, fallback to user list if unavailable
+      try {
+        const response = await axios.get(`${API_URL}/admin/user-answers`);
+        setUsers(response.data?.users || []);
+     
     } catch (err) {
-      setError(err.response?.data || err.message || 'ইউজার তালিকা লোড করা যায়নি');
+      setError(err.response?.data?.error || err.response?.data || err.message || 'সাবমিট করা ইউজারের উত্তর তালিকা লোড করা যায়নি');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUserAnswers();
   }, []);
 
   // Reset page when filters change
@@ -75,20 +78,22 @@ export default function AdminUsers() {
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'bn'));
   }, [users, selectedDistrict]);
 
-  // Delete user
+  // Delete user answer submission
   const handleDeleteUser = async (userToDelete) => {
     const uName = userToDelete.name || userToDelete.username || userToDelete.phone || 'এই ইউজার';
-    if (!window.confirm(`আপনি কি নিশ্চিত যে "${uName}" কে মুছে ফেলতে চান?`)) {
+    if (!window.confirm(`আপনি কি নিশ্চিত যে "${uName}" এর সাবমিট করা উত্তরটি মুছে ফেলতে চান?`)) {
       return;
     }
-    try {
-      await axios.delete(`${API_URL}/admin/user/${userToDelete.id}`);
+   
+      try {
+        await axios.delete(`${API_URL}/admin/user-answers/${userToDelete.id}`);
+      
       setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
       if (selectedUser?.id === userToDelete.id) {
         setSelectedUser(null);
       }
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data || err.message || 'ইউজার মুছে ফেলা সম্ভব হয়নি');
+      setError(err.response?.data?.error || err.response?.data || err.message || 'উত্তর মুছে ফেলা সম্ভব হয়নি');
     }
   };
 
@@ -125,11 +130,11 @@ export default function AdminUsers() {
               <span>Admin Dashboard</span>
             </Link>
           </div>
-          <h1 className="text-2xl font-bold text-white">ইউজার ম্যানেজমেন্ট</h1>
-          <p className="text-sm text-slate-400">নিবন্ধিত সকল ইউজারের তালিকা ও বিস্তারিত তথ্য</p>
+          <h1 className="text-2xl font-bold text-white">ইউজার অ্যান্সার ম্যানেজমেন্ট</h1>
+          <p className="text-sm text-slate-400">সাবমিট করা সকল ইউজারের উত্তর ও বিস্তারিত তথ্য</p>
         </div>
         <button
-          onClick={fetchUsers}
+          onClick={fetchUserAnswers}
           disabled={loading}
           className="flex items-center space-x-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition-colors w-fit"
         >
@@ -203,14 +208,14 @@ export default function AdminUsers() {
           <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-500" />
           <input
             type="text"
-            placeholder="ইউজার নাম বা ইমেইল দিয়ে সার্চ করুন..."
+            placeholder="ইউজার নাম বা ইমেইল/ফোন দিয়ে সার্চ করুন..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
         <div className="text-xs text-slate-400 font-medium">
-          মোট ইউজার: <span className="text-white font-bold">{users.length}</span> (ফিল্টারড: {filteredUsers.length})
+          মোট সাবমিশন: <span className="text-white font-bold">{users.length}</span> (ফিল্টারড: {filteredUsers.length})
         </div>
       </div>
 
@@ -224,7 +229,7 @@ export default function AdminUsers() {
         )}
 
         {loading ? (
-          <div className="py-12 text-center text-slate-400 text-sm">ইউজারদের তালিকা লোড হচ্ছে...</div>
+          <div className="py-12 text-center text-slate-400 text-sm">ইউজারদের সাবমিশন তালিকা লোড হচ্ছে...</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-300">
@@ -234,55 +239,58 @@ export default function AdminUsers() {
                   <th className="py-3.5 px-4">নাম</th>
                   <th className="py-3.5 px-4">ইমেইল / ফোন</th>
                   <th className="py-3.5 px-4 text-center">ডিটেইলস</th>
-                  <th className="py-3.5 px-4">রেজিস্ট্রেশ তারিখ ও সময়</th>
+                  <th className="py-3.5 px-4">সাবমিটের তারিখ ও সময়</th>
                   <th className="py-3.5 px-4 text-center">ডিলিট</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">
                 {paginatedUsers.length > 0 ? (
-                  paginatedUsers.map((u, i) => (
-                    <tr key={u.id || i} className="hover:bg-slate-700/40 transition-colors">
-                      <td className="py-3.5 px-4 font-mono text-slate-400">
-                        {(currentPage - 1) * ITEMS_PER_PAGE + i + 1}
-                      </td>
-                      <td className="py-3.5 px-4 font-semibold text-white">
-                        {u.name || u.username || u.full_name || 'N/A'}
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-300">
-                        {u.email || u.mobile || u.phone || 'N/A'}
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          onClick={() => setSelectedUser(u)}
-                          className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
-                        >
-                          <Eye className="h-3.5 w-3.5" />
-                          <span>ডিটেইলস</span>
-                        </button>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-400 font-mono whitespace-nowrap">
-                        {u.created_at
-                          ? new Date(u.created_at).toLocaleString('bn-BD', {
-                              dateStyle: 'medium',
-                              timeStyle: 'short',
-                            })
-                          : 'N/A'}
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          onClick={() => handleDeleteUser(u)}
-                          title="ইউজার মুছে ফেলুন"
-                          className="p-1.5 bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 hover:border-red-500 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  paginatedUsers.map((u, i) => {
+                    const submitDate = u.submitted_at || u.created_at || u.submission_date || u.created_time;
+                    return (
+                      <tr key={u.id || i} className="hover:bg-slate-700/40 transition-colors">
+                        <td className="py-3.5 px-4 font-mono text-slate-400">
+                          {(currentPage - 1) * ITEMS_PER_PAGE + i + 1}
+                        </td>
+                        <td className="py-3.5 px-4 font-semibold text-white">
+                          {u.name || u.username || u.full_name || 'N/A'}
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-300">
+                          {u.email || u.mobile || u.phone || 'N/A'}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button
+                            onClick={() => setSelectedUser(u)}
+                            className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white border border-indigo-500/30 hover:border-indigo-500 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            <span>ডিটেইলস</span>
+                          </button>
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-400 font-mono whitespace-nowrap">
+                          {submitDate
+                            ? new Date(submitDate).toLocaleString('bn-BD', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                              })
+                            : 'N/A'}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button
+                            onClick={() => handleDeleteUser(u)}
+                            title="উত্তর মুছে ফেলুন"
+                            className="p-1.5 bg-red-500/10 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 hover:border-red-500 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
                   <tr>
                     <td colSpan="6" className="py-8 text-center text-slate-500">
-                      কোনো ইউজার খুঁজে পাওয়া যায়নি।
+                      কোনো সাবমিটেড উত্তর খুঁজে পাওয়া যায়নি।
                     </td>
                   </tr>
                 )}
@@ -350,8 +358,8 @@ export default function AdminUsers() {
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">ইউজার বিস্তারিত তথ্য</h3>
-                  <p className="text-xs text-slate-400">ইউজার আইডি: #{selectedUser.id || 'N/A'}</p>
+                  <h3 className="text-lg font-bold text-white">ইউজার সাবমিশন তথ্য</h3>
+                  <p className="text-xs text-slate-400">আইডি: #{selectedUser.id || 'N/A'}</p>
                 </div>
               </div>
               <button
@@ -387,15 +395,6 @@ export default function AdminUsers() {
 
                 <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                    রোল (Role)
-                  </span>
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    {selectedUser.role || 'User'}
-                  </span>
-                </div>
-
-                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
                     বিভাগ
                   </span>
                   <span className="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
@@ -424,7 +423,7 @@ export default function AdminUsers() {
                   </span>
                 </div>
 
-                <div className="bg-slate-900/60 p-3.5 rounded-xl sm:col-span-2 border border-slate-700/60">
+                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
                     প্রতিষ্ঠান / ইনস্টিটিউট
                   </span>
@@ -434,20 +433,35 @@ export default function AdminUsers() {
                   </span>
                 </div>
 
+                {/* Submission Date & Time Column Replacement */}
                 <div className="bg-slate-900/60 p-3.5 rounded-xl sm:col-span-2 border border-slate-700/60">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                    রেজিস্ট্রেশন তারিখ ও সময়
+                    সাবমিটের তারিখ ও সময়
                   </span>
                   <span className="text-sm font-semibold text-slate-200 flex items-center gap-1.5 font-mono">
                     <Calendar className="h-4 w-4 text-indigo-400 shrink-0" />
-                    {selectedUser.created_at
-                      ? new Date(selectedUser.created_at).toLocaleString('bn-BD', {
+                    {(selectedUser.submitted_at || selectedUser.created_at || selectedUser.submission_date || selectedUser.created_time)
+                      ? new Date(selectedUser.submitted_at || selectedUser.created_at || selectedUser.submission_date || selectedUser.created_time).toLocaleString('bn-BD', {
                           dateStyle: 'full',
                           timeStyle: 'short',
                         })
                       : 'N/A'}
                   </span>
                 </div>
+
+                {/* Submitted Answers JSON/Data section if available */}
+                {selectedUser.answers && (
+                  <div className="bg-slate-900/60 p-3.5 rounded-xl sm:col-span-2 border border-slate-700/60">
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                      সাবমিট করা উত্তরসমূহ
+                    </span>
+                    <div className="text-xs text-slate-300 font-mono bg-slate-950 p-2.5 rounded-lg max-h-40 overflow-y-auto border border-slate-800">
+                      {typeof selectedUser.answers === 'object' 
+                        ? JSON.stringify(selectedUser.answers, null, 2)
+                        : String(selectedUser.answers)}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -458,7 +472,7 @@ export default function AdminUsers() {
                 className="px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-medium transition-colors flex items-center space-x-1.5"
               >
                 <Trash2 className="h-4 w-4" />
-                <span>ইউজার ডিলিট করুন</span>
+                <span>উত্তর ডিলিট করুন</span>
               </button>
               <button
                 onClick={() => setSelectedUser(null)}
