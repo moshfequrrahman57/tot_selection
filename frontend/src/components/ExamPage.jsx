@@ -5,7 +5,7 @@ import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
 import LoginPrompt from './LumSumPage/LoginPrompt';
 import { useBlocker } from 'react-router-dom';
-
+import toast, { Toaster } from 'react-hot-toast'; 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
   const { user, loading: authLoading } = useContext(AuthContext);
@@ -61,7 +61,7 @@ useEffect(() => {
     // setStatusMessage({ type: '', text: '' });
     setSubmitted(true);
     setIsActive(false); // Stop the timer when submitting
-
+    const loadingToast = toast.loading('Submitting Answer...'); 
     // Destructure the profile information directly from your Context user object
     const { name, phone, division, district, upazila, institute } = user;
     console.log(name,phone,division,district,upazila,institute);
@@ -85,7 +85,8 @@ useEffect(() => {
       });
       
       const result = await response.json();
-
+      
+      toast.success('Submitted Successful!', { id: loadingToast });
       if (!response.ok) throw new Error(result.error || 'Submission failed');
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
@@ -95,8 +96,9 @@ useEffect(() => {
 
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.message });
+      toast.error(err.message || 'Submission Failed', { id: loadingToast });
     } finally {
-      
+      setSubmitted(false);
     }
   };
   
@@ -115,7 +117,7 @@ if (!user) {
   return (
    
     <div className="min-h-screen bg-slate-50 py-10 px-4 max-w-2xl mx-auto space-y-6">
-
+     <Toaster position="top-center" reverseOrder={false} containerStyle={{ zIndex: 99999 }} />
       <div>
       <h1>পরীক্ষা চলছে...</h1>
       
