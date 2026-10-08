@@ -55,6 +55,7 @@ export default function Layout() {
               Exam Panel
             </Link>
             <Link to="/helpdesk2" className="text-gray-600 hover:text-blue-600 font-medium">Helpdesk</Link>
+             <Link to="/admin" className=" text-orange-600 hover:text-green-600 font-medium">Admin</Link>
             </div>
            
             <div>
@@ -133,6 +134,9 @@ export default function Layout() {
             
           <Link to="/helpdesk2" onClick={() => setIsOpen(false)} className="text-gray-600 hover:text-blue-600 text-lg font-medium border-b border-gray-100 pb-2">
             Help Desk
+          </Link>
+          <Link to="/admin" onClick={() => setIsOpen(false)} className="text-orange-600 hover:text-green-600 text-lg font-medium border-b border-gray-100 pb-2">
+            Admin
           </Link>
             
         </div>

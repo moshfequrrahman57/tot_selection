@@ -2,30 +2,51 @@ import React, { useState } from 'react';
 import { 
   createBrowserRouter, 
   RouterProvider,
+  Navigate
 } from 'react-router-dom';
 
-// আপনার কম্পোনেন্টগুলোর ইমপোর্ট (বাকিগুলো আপনার কোড অনুযায়ী নিশ্চিত করে নেবেন)
-import './App.css'
-import Navbar from './components/Navbar.jsx'
-import ExamPage from './components/ExamPage.jsx'
-import LoginPage from './components/LoginPage.jsx'
-import SignUpPage from './components/SignUpPage.jsx'
-import Layout from './components/Layout.jsx'
-import InstructionsPage from './components/InstructionPage.jsx'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import ProfileSummary from './components/ProfileSummary.jsx'
-import HomePage from './components/HomePage.jsx'
-import Profile from './components/Profile.jsx'
-import Pdf_Download from './components/Pdf_Download.jsx'
-import Helpdesk from './components/Helpdesk.jsx'
-import Helpdesk2 from './components/Helpdesk2.jsx'
+// Standard App Components & Layout
+import './App.css';
+import Layout from './components/Layout.jsx';
+import LoginPage from './components/LoginPage.jsx';
+import SignUpPage from './components/SignUpPage.jsx';
+import ExamPage from './components/ExamPage.jsx';
+import InstructionsPage from './components/InstructionPage.jsx';
+import ProfileSummary from './components/ProfileSummary.jsx';
+import HomePage from './components/HomePage.jsx';
+import Profile from './components/Profile.jsx';
+import Pdf_Download from './components/Pdf_Download.jsx';
+import Helpdesk from './components/Helpdesk.jsx';
+import Helpdesk2 from './components/Helpdesk2.jsx';
 
-// অন্যান্য কম্পোনেন্ট যেমন Layout, LoginPage, ExamPage ইত্যাদি এখানে ইমপোর্ট করা থাকবে...
+// Admin Components & Admin Layout
+import AdminLayout from './components/admin/AdminLayout.jsx';
+import AdminDashboard from './components/admin/AdminDashboard.jsx';
+import AdminUsers from './components/admin/AdminUsers.jsx';
 
-// ১. রাউটার অবজেক্ট তৈরি (createBrowserRouter ব্যবহার করে)
+// createBrowserRouter Configuration with Separate Routers/Layouts
 const router = createBrowserRouter([
+  // 1. Admin Routes with AdminLayout
   {
-    // Parent route using the layout container
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <AdminDashboard />
+      },
+      {
+        path: "users",
+        element: <AdminUsers />
+      },
+      {
+        path: "*",
+        element: <Navigate to="/admin" replace />
+      }
+    ]
+  },
+  // 2. Main Application Routes with standard Layout
+  {
     element: <Layout />,
     children: [
       {
@@ -42,7 +63,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/exam",
-        element: <ExamPage /> // এই কম্পোনেন্টের ভেতরে এখন আপনি useBlocker ব্যবহার করতে পারবেন
+        element: <ExamPage />
       },
       {
         path: "/instructions",
@@ -81,10 +102,6 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  // কাউন্টার স্টেট যদি আপনার অ্যাপের অন্য কোথাও প্রয়োজন হয়
-  const [count, setCount] = useState(0);
-
-  // ২. RouterProvider দিয়ে রাউটারটি রিটার্ন করা
   return <RouterProvider router={router} />;
 }
 

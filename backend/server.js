@@ -7,11 +7,11 @@ import profileinfo_route from './routes/profileInfo.js';
 import question_route from './routes/questions.js';
 import answer_route from './routes/answers.js';
 import quiz_code_route from './routes/quiz-code.js';
+import admin_route from './routes/admin.js';
 
 const app = express();
 
 dotenv.config();
- 
 const PORT = process.env.PORT || 6001;
 
 // মিডেলওয়্যার (JSON ডেটা রিড করার জন্য)
@@ -54,6 +54,7 @@ app.use("/login", profileinfo_route);
 app.use("/api/questions",question_route);
 app.use("/api/answers", answer_route);
 app.use("/verify-code",quiz_code_route);
+app.use("/admin",admin_route);
 
 
 // সার্ভার চালু করা

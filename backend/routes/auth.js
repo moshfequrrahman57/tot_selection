@@ -44,7 +44,7 @@ auth_router.post('/login', async (req, res) => {
     // মোবাইল নম্বর চেক করা
     const userResult = await pool.query('SELECT * FROM users WHERE phone = $1', [phone]);
     if (userResult.rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid phone or password!' });
+      return res.status(400).json({ message: 'Invalid phone no' });
     }
 
     const user = userResult.rows[0];
@@ -52,7 +52,7 @@ auth_router.post('/login', async (req, res) => {
     // পাসওয়ার্ড ম্যাচ করা
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid email or password!' });
+      return res.status(400).json({ message: 'Invalid  password!' });
     }
 
     // JWT টোকেন তৈরি করা (১ ঘণ্টার জন্য কার্যকর)
