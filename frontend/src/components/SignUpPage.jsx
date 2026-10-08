@@ -135,7 +135,7 @@ const BANGLADESH = {
         setFormData({name: '',phone: '', division: '',district: '', upazila: '',institute: '',password: '',});
         setTimeout(() => {
           navigate('/login');
-        }, 1500);
+        }, 500);
       } else {
         setMessage(data.message);
         toast.error(data.message || 'Registration Failed', { id: loadingToast });

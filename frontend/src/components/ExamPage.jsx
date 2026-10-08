@@ -4,12 +4,13 @@ import QuestionList from './QuestionList';     // Path to your QuestionList comp
 import QuizSubmitButton from './QuizSubmitButton'; // The new component
 import VerifyQuizCode from './VerifyQuizCode';
 import LoginPrompt from './LumSumPage/LoginPrompt';
-import { useBlocker } from 'react-router-dom';
+import { useBlocker, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'; 
 const ExamPage = () => {
   // 1. Get user profile data directly from your AuthContext
   const { user, loading: authLoading } = useContext(AuthContext);
-  
+    const navigate = useNavigate();
+
   // 2. State to hold answers bubble up from QuestionList
   // const [selectedAnswers, setSelectedAnswers] = useState({});
   const [selectedAnswers, setSelectedAnswers] = useState(() => {
@@ -85,7 +86,7 @@ useEffect(() => {
       });
       
       const result = await response.json();
-      
+      await new Promise(resolve => setTimeout(resolve, 3000));
       toast.success('Submitted Successful!', { id: loadingToast });
       if (!response.ok) throw new Error(result.error || 'Submission failed');
 
@@ -93,12 +94,15 @@ useEffect(() => {
       localStorage.removeItem('exam_answers');
       localStorage.removeItem('isQuizVerified');
       
+          navigate('/submitted');
+       
 
     } catch (err) {
       setStatusMessage({ type: 'error', text: err.message });
       toast.error(err.message || 'Submission Failed', { id: loadingToast });
     } finally {
       setSubmitted(false);
+      
     }
   };
   
