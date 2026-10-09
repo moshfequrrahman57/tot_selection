@@ -307,6 +307,7 @@ export default function AdminUsers() {
                   <th className="py-3.5 px-4 text-center">সাবমিটেড অ্যান্সার স্ট্যাটাস</th>
                   <th className="py-3.5 px-4 text-center">ডিটেইলস</th>
                   <th className="py-3.5 px-4">রেজিস্ট্রেশন তারিখ ও সময়</th>
+                  <th className="py-3.5 px-4">Attempt</th>
                   <th className="py-3.5 px-4 text-center">ডিলিট</th>
                 </tr>
               </thead>
@@ -353,6 +354,9 @@ export default function AdminUsers() {
                             })
                           : 'N/A'}
                       </td>
+                      <td className="py-3.5 px-4 text-slate-300">
+                        {u.no_of_attempt ||  'N/A'}
+                        </td>
                       <td className="py-3.5 px-4 text-center">
                         <button
                           onClick={() => handleDeleteUser(u)}

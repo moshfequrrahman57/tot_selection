@@ -21,7 +21,7 @@ export const BANGLADESH = {
     "Tangail": ["Kalihati", "Ghatail", "Mirzapur"]
   },
   "Mymensingh": {
-    "Mymensingh": ["Gafargaon", "Gouripur", "Haluaghat", "Trishal"],
+    "Mymensingh": ["Gafargaon", "Gouripur", "Haluaghat", "Trishal", "Jamalpur"],
     "Jamalpur": ["Islampur", "Madarganj"],
     "Sherpur": ["Nalitabari"],
     "Netrokona": ["Atpara", "Purbadhala"]

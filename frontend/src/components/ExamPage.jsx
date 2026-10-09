@@ -33,7 +33,6 @@ useEffect(() => {
   //   return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
   // });
   const [isVerified, setIsVerified]=useState(false);
- 
   
   const [isActive, setIsActive] = useState(false); 
   
@@ -47,20 +46,36 @@ useEffect(() => {
 
  
 
-  const handleVerificationSuccessful= ()=>{
-    if(localStorage.getItem('pagereload')==1){
-      handleQuizSubmit();
-      console.log("You again reloaded your page.");
+  const handleVerificationSuccessful = async () => {
+    // Check if user has already attempted the exam
+    if (user.no_of_attempt !== null && user.no_of_attempt !== undefined) {
+      toast.error('আপনি ইতিমধ্যে পরীক্ষা দিয়েছেন। পুনরায় পরীক্ষা দেওয়া সম্ভব নয়।');
+      return;
     }
-    
-      console.log("You first loaded your page");
-      localStorage.setItem('pagereload',1);
+
+    // First attempt — allow access
+    //localStorage.setItem('isQuizVerified', 'true');
     setIsVerified(true);
-      setIsActive(true);
-    
-   // localStorage.setItem('isQuizVerified', 'true');
-    
-     // ভেরিফিকেশন সফল হলে টাইমার শুরু হবে
+    setIsActive(true);
+
+    // Record the attempt in the database
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/login/update-attempt`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        console.error('Failed to record attempt:', result.error);
+      }
+    } catch (error) {
+      console.error('Error recording attempt:', error);
+    }
   }
 
   // Callback to receive answers from QuestionList child component
@@ -111,7 +126,7 @@ useEffect(() => {
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
       localStorage.removeItem('exam_answers');
-    //  localStorage.removeItem('isQuizVerified');
+     // localStorage.removeItem('isQuizVerified');
       
           navigate('/submitted');
        
@@ -134,7 +149,12 @@ if (!user) {
 
 }
   if (!isVerified) {
-    return <VerifyQuizCode onVerificationSuccess={handleVerificationSuccessful } />;
+    return (
+    <>
+      <Toaster position="top-center" reverseOrder={false} containerStyle={{ zIndex: 99999 }} />
+      <VerifyQuizCode onVerificationSuccess={handleVerificationSuccessful} />
+    </>
+  );
   }
  
   return (
