@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Users, Search, RefreshCw, AlertCircle, ArrowLeft, Eye, X, 
   User, Phone, MapPin, Building, Calendar, Trash2, Filter, 
-  ChevronLeft, ChevronRight 
+  ChevronLeft, ChevronRight, CheckCircle2, XCircle
 } from 'lucide-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,7 @@ export default function AdminUsers() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedUpazila, setSelectedUpazila] = useState('');
+  const [selectedSubmissionStatus, setSelectedSubmissionStatus] = useState(''); // '' | 'submitted' | 'not_submitted'
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,7 +42,15 @@ export default function AdminUsers() {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedDistrict, selectedUpazila]);
+  }, [searchTerm, selectedDistrict, selectedUpazila, selectedSubmissionStatus]);
+
+  // Submission statistics calculation
+  const stats = useMemo(() => {
+    const total = users.length;
+    const submitted = users.filter((u) => Boolean(u.is_submitted)).length;
+    const notSubmitted = total - submitted;
+    return { total, submitted, notSubmitted };
+  }, [users]);
 
   // Extract District options from BANGLADESH dataset & loaded users
   const districtOptions = useMemo(() => {
@@ -92,7 +101,7 @@ export default function AdminUsers() {
     }
   };
 
-  // Filter users by search, district, upazila
+  // Filter users by search, district, upazila, submission status
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
       const term = searchTerm.toLowerCase();
@@ -103,9 +112,14 @@ export default function AdminUsers() {
       const matchesDistrict = selectedDistrict ? u.district === selectedDistrict : true;
       const matchesUpazila = selectedUpazila ? u.upazila === selectedUpazila : true;
 
-      return matchesSearch && matchesDistrict && matchesUpazila;
+      const matchesSubmissionStatus = 
+        selectedSubmissionStatus === 'submitted' ? Boolean(u.is_submitted) :
+        selectedSubmissionStatus === 'not_submitted' ? !u.is_submitted :
+        true;
+
+      return matchesSearch && matchesDistrict && matchesUpazila && matchesSubmissionStatus;
     });
-  }, [users, searchTerm, selectedDistrict, selectedUpazila]);
+  }, [users, searchTerm, selectedDistrict, selectedUpazila, selectedSubmissionStatus]);
 
   // Pagination logic
   const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE) || 1;
@@ -138,6 +152,48 @@ export default function AdminUsers() {
         </button>
       </div>
 
+      {/* Submission Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Card 1: Total Users */}
+        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center justify-between shadow-md">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+              <Users className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">মোট ইউজার</p>
+              <p className="text-2xl font-extrabold text-white mt-0.5">{stats.total}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Submitted Users */}
+        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center justify-between shadow-md">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+              <CheckCircle2 className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">উত্তর জমা দিয়েছেন (Submitted)</p>
+              <p className="text-2xl font-extrabold text-emerald-400 mt-0.5">{stats.submitted}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Not Submitted Users */}
+        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center justify-between shadow-md">
+          <div className="flex items-center space-x-3.5">
+            <div className="p-3 bg-rose-500/10 text-rose-400 rounded-xl border border-rose-500/20">
+              <XCircle className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">উত্তর জমা দেননি (Not Submitted)</p>
+              <p className="text-2xl font-extrabold text-rose-400 mt-0.5">{stats.notSubmitted}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Filter Bar (Above Search Bar) */}
       <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         <div className="flex items-center space-x-2 text-indigo-400 font-semibold text-xs shrink-0">
@@ -145,6 +201,20 @@ export default function AdminUsers() {
           <span>ফিল্টার:</span>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 flex-1 justify-end">
+          {/* Submission Status Filter Dropdown */}
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-xs text-slate-400 whitespace-nowrap">সাবমিটেড উত্তর স্ট্যাটাস:</label>
+            <select
+              value={selectedSubmissionStatus}
+              onChange={(e) => setSelectedSubmissionStatus(e.target.value)}
+              className="w-full sm:w-48 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="">সকল স্ট্যাটাস</option>
+              <option value="submitted">উত্তর জমা দিয়েছেন (Submitted)</option>
+              <option value="not_submitted">উত্তর জমা দেননি (Not Submitted)</option>
+            </select>
+          </div>
+
           {/* District Dropdown */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <label className="text-xs text-slate-400 whitespace-nowrap">জেলা:</label>
@@ -183,11 +253,12 @@ export default function AdminUsers() {
           </div>
 
           {/* Reset Filters */}
-          {(selectedDistrict || selectedUpazila) && (
+          {(selectedDistrict || selectedUpazila || selectedSubmissionStatus) && (
             <button
               onClick={() => {
                 setSelectedDistrict('');
                 setSelectedUpazila('');
+                setSelectedSubmissionStatus('');
               }}
               className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-medium transition-colors whitespace-nowrap w-full sm:w-auto"
             >
@@ -233,8 +304,9 @@ export default function AdminUsers() {
                   <th className="py-3.5 px-4">#</th>
                   <th className="py-3.5 px-4">নাম</th>
                   <th className="py-3.5 px-4">ইমেইল / ফোন</th>
+                  <th className="py-3.5 px-4 text-center">সাবমিটেড অ্যান্সার স্ট্যাটাস</th>
                   <th className="py-3.5 px-4 text-center">ডিটেইলস</th>
-                  <th className="py-3.5 px-4">রেজিস্ট্রেশ তারিখ ও সময়</th>
+                  <th className="py-3.5 px-4">রেজিস্ট্রেশন তারিখ ও সময়</th>
                   <th className="py-3.5 px-4 text-center">ডিলিট</th>
                 </tr>
               </thead>
@@ -250,6 +322,19 @@ export default function AdminUsers() {
                       </td>
                       <td className="py-3.5 px-4 text-slate-300">
                         {u.email || u.mobile || u.phone || 'N/A'}
+                      </td>
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        {u.is_submitted ? (
+                          <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>Submitted</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                            <XCircle className="h-3.5 w-3.5" />
+                            <span>Not Submitted</span>
+                          </span>
+                        )}
                       </td>
                       <td className="py-3.5 px-4 text-center">
                         <button
@@ -281,7 +366,7 @@ export default function AdminUsers() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="py-8 text-center text-slate-500">
+                    <td colSpan="7" className="py-8 text-center text-slate-500">
                       কোনো ইউজার খুঁজে পাওয়া যায়নি।
                     </td>
                   </tr>
@@ -383,6 +468,23 @@ export default function AdminUsers() {
                     <Phone className="h-4 w-4 text-indigo-400 shrink-0" />
                     {selectedUser.phone || selectedUser.email || selectedUser.mobile || 'N/A'}
                   </span>
+                </div>
+
+                <div className="bg-slate-900/60 p-3.5 rounded-xl sm:col-span-2 border border-slate-700/60">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                    সাবমিটেড অ্যান্সার স্ট্যাটাস
+                  </span>
+                  {selectedUser.is_submitted ? (
+                    <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>উত্তর জমা দিয়েছেন (Submitted)</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                      <XCircle className="h-4 w-4" />
+                      <span>উত্তর জমা দেননি (Not Submitted)</span>
+                    </span>
+                  )}
                 </div>
 
                 <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">

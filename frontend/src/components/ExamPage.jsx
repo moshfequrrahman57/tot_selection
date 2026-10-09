@@ -25,12 +25,15 @@ useEffect(() => {
 
 
   const [submitted, setSubmitted] = useState(false);
+
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
   // স্টেট ইনিশিয়ালাইজ করার সময় localStorage চেক করা হচ্ছে
-  const [isVerified, setIsVerified] = useState(() => {
-    const savedStatus = localStorage.getItem('isQuizVerified');
-    return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
-  });
+  // const [isVerified, setIsVerified] = useState(() => {
+  //   const savedStatus = localStorage.getItem('isQuizVerified');
+  //   return savedStatus === 'true'; // যদি আগে থেকে 'true' সেভ থাকে তবে সরাসরি true হবে
+  // });
+  const [isVerified, setIsVerified]=useState(false);
+ 
   
   const [isActive, setIsActive] = useState(false); 
   
@@ -38,17 +41,33 @@ useEffect(() => {
     ({ currentLocation, nextLocation }) =>
       isActive && currentLocation.pathname !== nextLocation.pathname
   );
+  // যখনই submitted স্টেট চেঞ্জ হবে, রিফের ভ্যালু আপডেট হবে
+  
+ 
+
+ 
 
   const handleVerificationSuccessful= ()=>{
+    if(localStorage.getItem('pagereload')==1){
+      handleQuizSubmit();
+      console.log("You again reloaded your page.");
+    }
+    
+      console.log("You first loaded your page");
+      localStorage.setItem('pagereload',1);
     setIsVerified(true);
-    localStorage.setItem('isQuizVerified', 'true');
-    setIsActive(true); // ভেরিফিকেশন সফল হলে টাইমার শুরু হবে
+      setIsActive(true);
+    
+   // localStorage.setItem('isQuizVerified', 'true');
+    
+     // ভেরিফিকেশন সফল হলে টাইমার শুরু হবে
   }
 
   // Callback to receive answers from QuestionList child component
   const handleAnswersChange = (answers) => {
     console.log("Answers from Exam page:  ", answers);
     setSelectedAnswers(answers);
+
   };
 
   // The central submit handler
@@ -58,7 +77,7 @@ useEffect(() => {
       setStatusMessage({ type: 'error', text: 'Please log in to submit the quiz.' });
       return;
     }
-
+    
     // setStatusMessage({ type: '', text: '' });
     setSubmitted(true);
     setIsActive(false); // Stop the timer when submitting
@@ -92,7 +111,7 @@ useEffect(() => {
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
       localStorage.removeItem('exam_answers');
-      localStorage.removeItem('isQuizVerified');
+    //  localStorage.removeItem('isQuizVerified');
       
           navigate('/submitted');
        

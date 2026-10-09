@@ -13,6 +13,7 @@ const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('isQuizVerified');
     localStorage.removeItem('exam_answers');
+     // localStorage.removeItem('pagereload');
 
 
     // 3. Kick the user out to the login page

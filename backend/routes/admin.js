@@ -8,11 +8,23 @@ const admin_route=express.Router();
 
 admin_route.get('/user', async (req, res)=>{
     try{
-
         const result = await pool.query('select now()');
-        const userData= await pool.query('select * from users');
-        res.json({ message: "Success", time: result.rows[0], users: userData.rows})
-
+        let userData;
+        try {
+            userData = await pool.query(`
+                SELECT u.*, 
+                       EXISTS (
+                           SELECT 1 FROM user_answers ua 
+                           WHERE TRIM(ua.phone) = TRIM(u.phone)
+                       ) AS is_submitted
+                FROM users u
+                ORDER BY u.id DESC
+            `);
+        } catch (dbErr) {
+            console.log("user_answers status query fallback:", dbErr.message);
+            userData = await pool.query('SELECT u.*, false AS is_submitted FROM users u ORDER BY u.id DESC');
+        }
+        res.json({ message: "Success", time: result.rows[0], users: userData.rows});
     }
     catch(err){
         console.log(err.message);
