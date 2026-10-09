@@ -3,8 +3,8 @@ import { Phone } from 'lucide-react';
 const programmers = [
   { name: 'মুহাম্মদ মাহ্‌দী', designation: 'প্রোগ্রামার', phone: '01746434034' },
   { name: 'মিল্টন দাস', designation: 'প্রোগ্রামার', phone: '01515607165' },
-  { name: 'মোঃ সালাউদ্দিন', designation: 'প্রোগ্রামার', phone: 'PABX: ICT' },
-  { name: 'দেবব্রত চক্রবর্তী', designation: 'প্রোগ্রামার', phone: 'PABX: ICT' }
+  { name: 'মোঃ সালাউদ্দিন', designation: 'প্রোগ্রামার', phone: '01557685179' },
+  { name: 'দেবব্রত চক্রবর্তী', designation: 'প্রোগ্রামার', phone: '01717143821' }
 ];
 
 export default function Helpdesk() {

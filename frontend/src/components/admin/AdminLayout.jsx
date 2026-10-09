@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, LayoutDashboard, Users, ArrowLeft, Menu, X, LogOut, FileText } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Users, ArrowLeft, Menu, X, LogOut, FileText, HelpCircle } from 'lucide-react';
 
 export default function AdminLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,6 +11,7 @@ export default function AdminLayout() {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'User Management', path: '/admin/users', icon: Users },
     { name: 'User Answers', path: '/admin/answers', icon: FileText },
+    { name: 'Question Management', path: '/admin/questions', icon: HelpCircle },
   ];
 
   const isActive = (path) => {

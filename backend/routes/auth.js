@@ -55,11 +55,11 @@ auth_router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid  password!' });
     }
 
-    // JWT টোকেন তৈরি করা (১ ঘণ্টার জন্য কার্যকর)
+    // JWT টোকেন তৈরি করা (৩ ঘণ্টার জন্য কার্যকর)
     const token = jwt.sign(
       { userId: user.id, phone: user.phone }, 
       JWT_SECRET, 
-      { expiresIn: '1h' }
+      { expiresIn: '3h' }
     );
 
     // টোকেনটি রেসপন্স হিসেবে পাঠানো
