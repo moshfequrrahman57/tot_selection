@@ -51,7 +51,8 @@ const handleSubmit = async (e) => {
           navigate('/homepage'); // Redirect to homepage after successful login
         }, 1500);
         console.log('Logged in user info:', data);
-      } else {
+      } 
+      else {
         // Displays backend validation or database errors (e.g., "Invalid credentials")
         setErrorMessage(data.error || 'Login failed.');
         toast.error(data.message || 'Login Failed', { id: loadingToast });

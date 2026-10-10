@@ -23,8 +23,8 @@ export default function InstructionPage() {
       
       {/* পেজ হেডার (Page Header) */}
       <div className="mb-3 text-center sm:text-left border-b border-slate-200 pb-6">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/10 mb-3">
-          ঘোষণা / Announcement
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-indigo-600/10 mb-3">
+          ঘোষণা / Announcement-update
         </span>
         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
           পরীক্ষা নির্দেশনাবলী
