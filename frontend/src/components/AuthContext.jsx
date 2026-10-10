@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   // অ্যাপ লোড হওয়ার সময় বা টোকেন চেঞ্জ হলে ডেটা অটো-ফেচ হবে
   const fetchUserProfile = async (tokenParam=null) => {
     const token = tokenParam || localStorage.getItem('token');
-    console.log('Fetching user profile with token from fetchUserProfile:', token);
+    // console.log('Fetching user profile with token from fetchUserProfile:', token);
 
     await new Promise(resolve => setTimeout(resolve, 500)); 
 
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user); // ডাটাবেজ থেকে আসা ইউজার অবজেক্ট
       } else {
         localStorage.removeItem('token'); // ইনভ্যালিড টোকেন হলে রিমুভ
-        console.log("Token remove from auth context due to invalid token or error:", data.error);
+        // console.log("Token remove from auth context due to invalid token or error:", data.error);
         setUser(null);
       }
     } catch (error) {

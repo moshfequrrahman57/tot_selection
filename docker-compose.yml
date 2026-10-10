@@ -1,4 +1,3 @@
-# version: '3.8'
 
 services:
   # ১. এক্সপ্রেস ব্যাকএন্ড সার্ভিস
@@ -10,11 +9,14 @@ services:
       - "6001:6001"
     environment:
       - PORT=6001
-      #🌟 Inside Docker network, this points to the database container
-      - DB_PORT=5432          # 🌟 Inside Docker network, use the internal port 5432
-      - DB_DATABASE=quiz_db_705k
-      - REDIS_URL=redis://red-daumlrflk1mc73dg0740:6379
-      - FRONTEND_URL=https://tot-selection-backup-1.onrender.com
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}  # 🌟 Inside Docker network, this points to the database container
+      - DB_PORT=${DB_PORT}          # 🌟 Inside Docker network, use the internal port 5432
+      - DB_DATABASE=${DB_DATABASE}
+      - REDIS_URL=redis://redis-cache:6378
+      - FRONTEND_URL=http://localhost:5173
+      - JWT_SECRET=${JWT_SECRET}
     depends_on:
       - postgres-db
       - redis-cache
@@ -29,7 +31,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=https://tot-selection-backup.onrender.com
+      - VITE_API_URL=http://localhost:6001
     depends_on:
       - backend-app
     networks:
@@ -39,9 +41,11 @@ services:
   postgres-db:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_DB=quiz_db_705k
+      - POSTGRES_USER=${DB_USER}         # ডকারকে বোঝানোর জন্য বামে POSTGRES_USER ই রাখতে হবে
+      - POSTGRES_PASSWORD=${DB_PASSWORD} # বামে POSTGRES_PASSWORD ই রাখতে হবে
+      - POSTGRES_DB=${DB_DATABASE}
     ports:
-      - "5432:5432" # এটি দেওয়ার কারণে আপনি লোকাল pgAdmin দিয়েও কানেক্ট করতে পারবেন
+      - "5433:5432" # এটি দেওয়ার কারণে আপনি লোকাল pgAdmin দিয়েও কানেক্ট করতে পারবেন
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -51,7 +55,7 @@ services:
   redis-cache:
     image: redis:7-alpine
     ports:
-      - "6379:6379" # এটি দেওয়ার কারণে লোকাল Redis Insight দিয়ে দেখতে পারবেন
+      - "6379:6378" # এটি দেওয়ার কারণে লোকাল Redis Insight দিয়ে দেখতে পারবেন
     networks:
       - quiz-network
 
@@ -63,3 +67,4 @@ volumes:
 networks:
   quiz-network:
     driver: bridge
+

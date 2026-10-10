@@ -16,7 +16,7 @@ const protect = async (req, res, next) => {
 
     // ৩. টোকেন ভেরিফাই করা
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decoded);
+    // console.log(decoded);
 
     // ৪. ইউজারের ইনফো রিকোয়েস্ট অবজেক্টে সেভ করা (যাতে পরের রুট এটি ব্যবহার করতে পারে)
     req.user = decoded; 

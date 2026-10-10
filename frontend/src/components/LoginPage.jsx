@@ -43,7 +43,7 @@ const handleSubmit = async (e) => {
         const token = data.token; // Assuming your backend returns a JWT token
         // OPTIONAL: If your API returns a JWT token or user data, save it here
         localStorage.setItem('token', data.token);
-        console.log('Token saved to localStorage:', data.token);
+        // console.log('Token saved to localStorage:', data.token);
         // 🌟 ম্যাজিক লাইন: এটি কল করার সাথে সাথে গ্লোবাল স্টেট আপডেট হবে
         await fetchUserProfile(token); 
 

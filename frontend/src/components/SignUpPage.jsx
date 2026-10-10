@@ -110,7 +110,7 @@ const BANGLADESH = {
 
    const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent standard page refresh
-    console.log({...formData});
+     console.log({...formData});
     setIsSubmitting(true); // সাবমিট প্রক্রিয়া শুরু হলে বাটন লক হবে
     // একটি রানিং টোস্ট লোডার দেখাবে যা ব্যাকএন্ড রেসপন্স না পাওয়া পর্যন্ত স্ক্রিনে থাকবে
     const loadingToast = toast.loading('Registering account...'); 

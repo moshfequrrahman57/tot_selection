@@ -80,7 +80,7 @@ useEffect(() => {
 
   // Callback to receive answers from QuestionList child component
   const handleAnswersChange = (answers) => {
-    console.log("Answers from Exam page:  ", answers);
+    // console.log("Answers from Exam page:  ", answers);
     setSelectedAnswers(answers);
 
   };
@@ -99,9 +99,9 @@ useEffect(() => {
     const loadingToast = toast.loading('Submitting Answer...'); 
     // Destructure the profile information directly from your Context user object
     const { name, phone, division, district, upazila, institute } = user;
-    console.log(name,phone,division,district,upazila,institute);
+    // console.log(name,phone,division,district,upazila,institute);
     const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
-    console.log("Answers:   ",selectedAnswers);
+    // console.log("Answers:   ",selectedAnswers);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/submit-quiz`, {
         method: 'POST',

@@ -8,7 +8,7 @@ const QuestionList = ({onAnswerChange, currentAnswers}) => {
   
   // ব্যবহারকারীর সিলেক্ট করা উত্তর জমা রাখার স্টেট (e.g., { [questionId]: 'option_b' })
   const [selectedAnswers, setSelectedAnswers] = useState(currentAnswers || {});
-    console.log("Selected Answers State from question list:", selectedAnswers);
+    // console.log("Selected Answers State from question list:", selectedAnswers);
 
   // API থেকে ডেটা ফেচ করা
   useEffect(() => {

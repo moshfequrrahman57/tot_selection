@@ -44,7 +44,7 @@ auth_router.post('/login', async (req, res) => {
     // মোবাইল নম্বর চেক করা
     const userResult = await pool.query('SELECT * FROM users WHERE phone = $1', [phone]);
     if (userResult.rows.length === 0) {
-      return res.status(400).json({ message: 'Invalid phone no' });
+      return res.status(400).json({ message: 'User not found!' });
     }
 
     const user = userResult.rows[0];
