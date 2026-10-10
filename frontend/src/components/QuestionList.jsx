@@ -38,6 +38,18 @@ const QuestionList = ({onAnswerChange, currentAnswers}) => {
     };
 
     fetchQuestions();
+    const handleCopy = (e) => {
+      e.preventDefault(); // Prevents the content from hitting the clipboard
+      alert('Copying content is disabled on this website.');
+    };
+
+    // Add listener to the entire document
+    document.addEventListener('copy', handleCopy);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener('copy', handleCopy);
+    };
   }, []);
 
   // Automatically save to local storage whenever answers change
@@ -86,7 +98,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="disable-copy min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* হেডার সেকশন */}
         <div className="text-center mb-8">

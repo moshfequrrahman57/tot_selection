@@ -5,7 +5,6 @@
     --color-project-main: #e35b20;  
 }
 
-
 .btn-premium {
   @apply bg-purple-600 text-white font-semibold 
   py-2 px-6 rounded-lg cursor-pointer
@@ -16,4 +15,11 @@
     @apply bg-project-main text-white font-semibold
      py-2 px-6 rounded-lg cursor-pointer
       hover:bg-orange-700 transition duration-300;
+}
+
+.disable-copy {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+/Edge */
+  user-select: none;         /* Standard */
 }

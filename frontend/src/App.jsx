@@ -25,6 +25,7 @@ import AdminDashboard from './components/admin/AdminDashboard.jsx';
 import AdminUsers from './components/admin/AdminUsers.jsx';
 import UsersAnswers from './components/admin/UsersAnswers.jsx';
 import AdminQuestions from './components/admin/AdminQuestions.jsx';
+import AdminMarksheet from './components/admin/AdminMarksheet.jsx';
 import SubmittedSuccessfully from './components/LumSumPage/SubmittedSuccessfully.jsx'
 
 // createBrowserRouter Configuration with Separate Routers/Layouts
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: "questions",
         element: <AdminQuestions />
+      },
+      {
+        path: "marksheet",
+        element: <AdminMarksheet />
       },
       {
         path: "*",

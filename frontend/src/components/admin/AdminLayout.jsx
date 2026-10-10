@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, LayoutDashboard, Users, ArrowLeft, Menu, X, LogOut, FileText, HelpCircle, KeyRound, AlertCircle } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, Users, ArrowLeft, Menu, X, LogOut, FileText, HelpCircle, KeyRound, AlertCircle, Award } from 'lucide-react';
 import useAdminAccess from './useAdminAccess';
 
 export default function AdminLayout() {
@@ -21,9 +21,10 @@ export default function AdminLayout() {
 
   const navLinks = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'User Management', path: '/admin/users', icon: Users },
-    { name: 'User Answers', path: '/admin/answers', icon: FileText },
-    { name: 'Question Management', path: '/admin/questions', icon: HelpCircle },
+    { name: 'Users', path: '/admin/users', icon: Users },
+    { name: 'Answers', path: '/admin/answers', icon: FileText },
+    { name: 'Questions', path: '/admin/questions', icon: HelpCircle },
+    { name: 'Mark sheet', path: '/admin/marksheet', icon: Award },
   ];
 
   const isActive = (path) => {

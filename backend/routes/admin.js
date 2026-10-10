@@ -93,6 +93,75 @@ admin_route.delete('/user-answers/:id', async (req, res) => {
     }
 });
 
+admin_route.get('/marksheet', async (req, res) => {
+    try {
+        const answersRes = await pool.query('SELECT * FROM user_answers ORDER BY id DESC');
+        const questionsRes = await pool.query('SELECT id, correct_answer FROM questions');
+        
+        const questionsMap = new Map();
+        questionsRes.rows.forEach(q => {
+            questionsMap.set(String(q.id), q.correct_answer);
+        });
+
+        const normalizeOption = (val) => {
+            if (!val) return '';
+            const str = String(val).trim().toLowerCase();
+            if (str === 'a' || str === 'option_a') return 'option_a';
+            if (str === 'b' || str === 'option_b') return 'option_b';
+            if (str === 'c' || str === 'option_c') return 'option_c';
+            if (str === 'd' || str === 'option_d') return 'option_d';
+            return str;
+        };
+
+        const marksheet = answersRes.rows.map(user => {
+            const userAnsObj = typeof user.answers === 'string' 
+                ? JSON.parse(user.answers || '{}') 
+                : (user.answers || {});
+
+            let all_answer = 0;
+            let correct_answer = 0;
+            let wrong_answer = 0;
+
+            Object.entries(userAnsObj).forEach(([qId, uAns]) => {
+                if (uAns) {
+                    all_answer++;
+                    const correctAns = questionsMap.get(String(qId));
+                    if (correctAns && normalizeOption(uAns) === normalizeOption(correctAns)) {
+                        correct_answer++;
+                    } else {
+                        wrong_answer++;
+                    }
+                }
+            });
+
+            const negative_mark = parseFloat((wrong_answer * 0.25).toFixed(2));
+            const total_mark = parseFloat((correct_answer - negative_mark).toFixed(2));
+
+            return {
+                id: user.id,
+                name: user.name || user.username || 'N/A',
+                phone: user.phone || user.mobile || user.email || 'N/A',
+                division: user.division || '',
+                district: user.district || '',
+                upazila: user.upazila || '',
+                institute: user.institute || '',
+                submitted_at: user.submitted_at || user.created_at || null,
+                all_answer,
+                correct_answer,
+                wrong_answer,
+                negative_mark,
+                total_mark,
+                raw_answers: userAnsObj
+            };
+        });
+
+        res.json({ success: true, marksheet });
+    } catch (err) {
+        console.error('Marksheet fetch error:', err.message);
+        res.status(500).json({ success: false, error: 'Server Error - marksheet' });
+    }
+});
+
 export default admin_route;
 
 
