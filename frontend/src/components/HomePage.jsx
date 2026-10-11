@@ -1,8 +1,7 @@
 import React from 'react';
 import { BookOpen, ShieldAlert, CheckCircle2, AlertCircle, FileText, ArrowRight, HelpCircle } from 'lucide-react';
 import Helpdesk from './Helpdesk';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+
 
 function HomePage() {
 
@@ -42,8 +41,12 @@ function HomePage() {
                   <div>
                     <h4 className="text-sm font-semibold text-rose-900">কঠোরভাবে নিষিদ্ধ</h4>
                     <ul className="mt-2 space-y-1 text-xs text-rose-700 list-disc list-inside">
-                      <li>পরীক্ষা চলাকালীন অন্য কোন ট্যাবে সুইচ করা নিষিদ্ধ  </li>
-                      <li>পরীক্ষা চলাকালীন অন্য কোন অ্যাপ্লিকেশনে সুইচ করা নিষিদ্ধ </li>
+                       <li>পরীক্ষা চলাকালীন অন্য কোন ট্যাবে সুইচ করা নিষিদ্ধ ।  </li>
+                      <li>পরীক্ষা চলাকালীন অন্য কোন অ্যাপ্লিকেশনে সুইচ করা নিষিদ্ধ । </li>
+                      <li>পেজ রিলোড বা কেটে দিলে পরীক্ষা বাতিল হয়ে যাবে । </li>
+                      <li>যদি অকারণে অন্য কোথায় চলে যান তাহলে ৫ সেকেন্ডের মধ্যে ফিরে আসুন । </li>
+                      <li> এভাবে সর্বোচ্চ ২ বার সুযোগ পাবেন । ৩য় বার অটোসাবমিট হয়ে যাবে । </li>
+                      <li> প্রশ্ন কপি করার কোন সুযোগ নাই । </li>
                       <li>এছাড়াও কোন অনৈতিক কার্যকলাপ পরিলক্ষিত হলে পরীক্ষা সিস্টেম থেকে বাতিল হবে । </li>
                     </ul>
                   </div>
