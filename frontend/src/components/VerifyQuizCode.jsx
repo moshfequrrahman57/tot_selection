@@ -64,7 +64,7 @@ const VerifyQuizCode = ({ onVerificationSuccess }) => {
               placeholder="কোডটি এখানে লিখুন"
               value={accessCode}
               onChange={(e) => setAccessCode(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl p-3 text-center text-lg font-semibold tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full border border-slate-200 rounded-xl p-3 text-center text-red-600 text-lg font-semibold tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               required
             />
           </div>

@@ -24,7 +24,7 @@ export default function InstructionPage() {
       {/* পেজ হেডার (Page Header) */}
       <div className="mb-3 text-center sm:text-left border-b border-slate-200 pb-6">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-indigo-600/10 mb-3">
-          ঘোষণা / Announcement-update
+          ঘোষণা / Announcement
         </span>
         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
           পরীক্ষা নির্দেশনাবলী
@@ -122,8 +122,12 @@ export default function InstructionPage() {
                   <div>
                     <h4 className="text-sm font-semibold text-rose-900">কঠোরভাবে নিষিদ্ধ</h4>
                     <ul className="mt-2 space-y-1 text-xs text-rose-700 list-disc list-inside">
-                      <li>পরীক্ষা চলাকালীন অন্য কোন ট্যাবে সুইচ করা নিষিদ্ধ  </li>
-                      <li>পরীক্ষা চলাকালীন অন্য কোন অ্যাপ্লিকেশনে সুইচ করা নিষিদ্ধ </li>
+                      <li>পরীক্ষা চলাকালীন অন্য কোন ট্যাবে সুইচ করা নিষিদ্ধ ।  </li>
+                      <li>পরীক্ষা চলাকালীন অন্য কোন অ্যাপ্লিকেশনে সুইচ করা নিষিদ্ধ । </li>
+                      <li>পেজ রিলোড বা কেটে দিলে পরীক্ষা বাতিল হয়ে যাবে । </li>
+                      <li>যদি অকারণে অন্য কোথায় চলে যান তাহলে ৫ সেকেন্ডের মধ্যে ফিরে আসুন । </li>
+                      <li> এভাবে সর্বোচ্চ ২ বার সুযোগ পাবেন । ৩য় বার অটোসাবমিট হয়ে যাবে । </li>
+                      <li> প্রশ্ন কপি করার কোন সুযোগ নাই । </li>
                       <li>এছাড়াও কোন অনৈতিক কার্যকলাপ পরিলক্ষিত হলে পরীক্ষা সিস্টেম থেকে বাতিল হবে । </li>
                     </ul>
                   </div>
