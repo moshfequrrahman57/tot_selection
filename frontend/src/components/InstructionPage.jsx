@@ -87,7 +87,7 @@ export default function InstructionPage() {
                 <div>
                   <h3 className="text-sm font-semibold text-slate-900">প্রতিষ্ঠানের তথ্য দিন </h3>
                   <p className="mt-1 text-sm text-slate-500 leading-relaxed">
-                    আপনার কর্মরত শিখা প্রতিষ্ঠানের তথ্য দিন (ইংরেজিতে Camel Case) । ভিন্ন হলে প্রতিষ্ঠানের নামের পাশে উপজেলা উল্লেখ করতে পারেন।   <span className="font-bold text-red-500"> যেমন: Abc Model High School </span>
+                    আপনার কর্মরত শিক্ষা প্রতিষ্ঠানের তথ্য দিন (ইংরেজিতে Camel Case) । ভিন্ন হলে প্রতিষ্ঠানের নামের পাশে উপজেলা উল্লেখ করতে পারেন।   <span className="font-bold text-red-500"> যেমন: Abc Model High School </span>
                   </p>
                 </div>
               </li>
