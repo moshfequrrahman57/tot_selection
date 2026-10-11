@@ -4,13 +4,14 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: moshfequrrahman57/tot_backend:v1 
     ports:
       - "6001:6001"
     volumes:
       - ./backend:/app
       - /app/node_modules
     environment:
-      - PORT=6001
+      - PORT=${PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_HOST=${DB_HOST}  # Inside Docker network, points to postgres-db
@@ -32,13 +33,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    image: moshfequrrahman57/tot_frontend:v1 
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:6001
+      - VITE_API_URL=${VITE_API_URL}
     depends_on:
       - backend-app
     networks:
