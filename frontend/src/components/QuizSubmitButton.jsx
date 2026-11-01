@@ -126,9 +126,9 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
 
     timerRef.current = setInterval(() => {
       setTimeSpent((prevTime) => {
-        if (prevTime >= 60) {
+        if (prevTime >= 120) {
           clearInterval(timerRef.current);
-          return 60;
+          return 120;
         }
         return prevTime + 1;
       });
@@ -141,7 +141,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
 
   // 🎯 🟢 মূল সমাধান: সময় শেষ হওয়া ট্র্যাক করার জন্য আলাদা এবং নিরাপদ useEffect
   useEffect(() => {
-    if (timeSpent >= 60 && !isSubmitted && !isSubmittingRef.current) {
+    if (timeSpent >= 120 && !isSubmitted && !isSubmittingRef.current) {
       handleQuizSubmit("আপনার পরীক্ষার নির্ধারিত সময় শেষ। উত্তর অটোমেটিক সাবমিট করা হচ্ছে।");
     }
   }, [timeSpent, isSubmitted]);
@@ -179,7 +179,7 @@ const QuizSubmitButton = ({ onValidateAndSubmit, isSubmitted, totalAnswered, isA
             Answered Question: <span className="font-semibold text-indigo-600 text-sm">{totalAnswered}</span> 
           </p>
           <p className="text-xs text-slate-500 mt-0.5">
-            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /60s
+            Elapsed Time: <span className="font-semibold text-indigo-600 text-sm">{timeSpent}s</span> /120s
           </p>
         </div>
       </div>
