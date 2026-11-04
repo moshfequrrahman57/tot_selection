@@ -47,6 +47,7 @@ useEffect(() => {
  
 
   const handleVerificationSuccessful = async () => {
+    
     // Check if user has already attempted the exam
     if (user.no_of_attempt !== null && user.no_of_attempt !== undefined) {
       toast.error('আপনি ইতিমধ্যে পরীক্ষা দিয়েছেন। পুনরায় পরীক্ষা দেওয়া সম্ভব নয়।');
