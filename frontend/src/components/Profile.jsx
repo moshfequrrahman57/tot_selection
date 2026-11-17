@@ -13,6 +13,7 @@ const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('isQuizVerified');
     localStorage.removeItem('exam_answers');
+    localStorage.removeItem('exam_questions_order');
      // localStorage.removeItem('pagereload');
 
 

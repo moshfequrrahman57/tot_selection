@@ -35,7 +35,7 @@ admin_route.get('/user', async (req, res)=>{
 admin_route.post('/secret', async (req, res)=>{
     const { access_code } =req.body;
     try{
-        const ADMIN_SECRET_CODE="1111";
+        const ADMIN_SECRET_CODE="181126";
 
         if(!access_code){
             return res.status(400).json({ success: false, error: 'অনুগ্রহ করে সিক্রেট কোডটি দিন '}); 
@@ -65,6 +65,79 @@ admin_route.delete('/user/:id', async (req, res) => {
     } catch (err) {
         console.log(err.message);
         res.status(500).send("Server Error - delete user");
+    }
+});
+
+admin_route.put('/user/:id/attempt', async (req, res) => {
+    const { id } = req.params;
+    const { no_of_attempt } = req.body;
+
+    if (no_of_attempt === undefined || no_of_attempt === null) {
+        return res.status(400).json({ success: false, error: 'অ্যাটেম্পট সংখ্যা দেওয়া আবশ্যক' });
+    }
+
+    const attemptVal = parseInt(no_of_attempt, 10);
+    if (isNaN(attemptVal) || attemptVal < 0) {
+        return res.status(400).json({ success: false, error: 'সঠিক অ্যাটেম্পট সংখ্যা দিন' });
+    }
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // Check user exists
+        const userRes = await client.query('SELECT * FROM users WHERE id = $1', [id]);
+        if (userRes.rows.length === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ success: false, error: 'ইউজার খুঁজে পাওয়া যায়নি' });
+        }
+        const user = userRes.rows[0];
+
+        // Update no_of_attempt in users table
+        const updateRes = await client.query(
+            'UPDATE users SET no_of_attempt = $1 WHERE id = $2 RETURNING *',
+            [attemptVal, id]
+        );
+
+        let answerDeleted = false;
+        // When attempt is 0, delete the answer of that user
+        if (attemptVal === 0 && user.phone) {
+            const deleteAnsRes = await client.query(
+                'DELETE FROM user_answers WHERE TRIM(phone) = TRIM($1) RETURNING id',
+                [user.phone]
+            );
+            answerDeleted = (deleteAnsRes.rowCount || 0) > 0;
+        }
+
+        await client.query('COMMIT');
+
+        // Check if user still has answers
+        let is_submitted = false;
+        if (attemptVal !== 0 && user.phone) {
+            const ansCheck = await pool.query(
+                'SELECT 1 FROM user_answers WHERE TRIM(phone) = TRIM($1) LIMIT 1',
+                [user.phone]
+            );
+            is_submitted = ansCheck.rows.length > 0;
+        }
+
+        res.json({
+            success: true,
+            message: attemptVal === 0
+                ? 'অ্যাটেম্পট সফলভাবে ০ করা হয়েছে এবং ইউজারের সাবমিট করা উত্তর মুছে ফেলা হয়েছে।'
+                : 'অ্যাটেম্পট সফলভাবে আপডেট করা হয়েছে।',
+            user: {
+                ...updateRes.rows[0],
+                is_submitted
+            },
+            answerDeleted
+        });
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error updating user attempt:', err);
+        res.status(500).json({ success: false, error: 'Server Error - update user attempt' });
+    } finally {
+        client.release();
     }
 });
 

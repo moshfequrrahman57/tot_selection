@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Users, Search, RefreshCw, AlertCircle, ArrowLeft, Eye, X, 
   User, Phone, MapPin, Building, Calendar, Trash2, Filter, 
-  ChevronLeft, ChevronRight, CheckCircle2, XCircle
+  ChevronLeft, ChevronRight, CheckCircle2, XCircle, Edit, Loader2
 } from 'lucide-react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { BANGLADESH } from '../../data/locations';
 
 export default function AdminUsers() {
@@ -18,6 +19,11 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
+
+  // Attempt edit modal state
+  const [editingAttemptUser, setEditingAttemptUser] = useState(null);
+  const [targetAttempt, setTargetAttempt] = useState(0);
+  const [updatingAttempt, setUpdatingAttempt] = useState(false);
 
   const ITEMS_PER_PAGE = 50;
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:6001';
@@ -98,6 +104,55 @@ export default function AdminUsers() {
       }
     } catch (err) {
       setError(err.response?.data?.error || err.response?.data || err.message || 'ইউজার মুছে ফেলা সম্ভব হয়নি');
+    }
+  };
+
+  // Open Attempt Edit Modal
+  const handleOpenAttemptModal = (user) => {
+    setEditingAttemptUser(user);
+    // If current attempt is 1, default target to 0 to easily convert 1 -> 0
+    const currentAttempt = Number(user.no_of_attempt) || 0;
+    setTargetAttempt(currentAttempt === 1 ? 0 : 1);
+  };
+
+  // Update Attempt & Delete Answers when converted to 0
+  const handleUpdateAttempt = async () => {
+    if (!editingAttemptUser) return;
+    setUpdatingAttempt(true);
+    const toastId = toast.loading('অ্যাটেম্পট আপডেট করা হচ্ছে...');
+    try {
+      const response = await axios.put(`${API_URL}/admin/user/${editingAttemptUser.id}/attempt`, {
+        no_of_attempt: targetAttempt
+      });
+
+      const updatedUser = response.data?.user || {
+        ...editingAttemptUser,
+        no_of_attempt: targetAttempt,
+        is_submitted: targetAttempt === 0 ? false : editingAttemptUser.is_submitted
+      };
+
+      setUsers((prev) =>
+        prev.map((u) => (u.id === editingAttemptUser.id ? { ...u, ...updatedUser } : u))
+      );
+
+      if (selectedUser?.id === editingAttemptUser.id) {
+        setSelectedUser((prev) => (prev ? { ...prev, ...updatedUser } : null));
+      }
+
+      toast.success(
+        response.data?.message || (targetAttempt === 0
+          ? 'অ্যাটেম্পট সফলভাবে ০ করা হয়েছে এবং উত্তর মুছে ফেলা হয়েছে!'
+          : 'অ্যাটেম্পট সফলভাবে আপডেট করা হয়েছে!'),
+        { id: toastId }
+      );
+      setEditingAttemptUser(null);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.error || err.response?.data?.message || err.message || 'অ্যাটেম্পট আপডেট ব্যর্থ হয়েছে',
+        { id: toastId }
+      );
+    } finally {
+      setUpdatingAttempt(false);
     }
   };
 
@@ -307,7 +362,7 @@ export default function AdminUsers() {
                   <th className="py-3.5 px-4 text-center">সাবমিটেড অ্যান্সার স্ট্যাটাস</th>
                   <th className="py-3.5 px-4 text-center">ডিটেইলস</th>
                   <th className="py-3.5 px-4">রেজিস্ট্রেশন তারিখ ও সময়</th>
-                  <th className="py-3.5 px-4">Attempt</th>
+                  <th className="py-3.5 px-4 text-center">Attempt</th>
                   <th className="py-3.5 px-4 text-center">ডিলিট</th>
                 </tr>
               </thead>
@@ -354,9 +409,28 @@ export default function AdminUsers() {
                             })
                           : 'N/A'}
                       </td>
-                      <td className="py-3.5 px-4 text-slate-300">
-                        {u.no_of_attempt ||  'N/A'}
-                        </td>
+                      <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                        <div className="inline-flex items-center space-x-2">
+                          <span
+                            className={`inline-flex items-center justify-center min-w-[28] px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                              Number(u.no_of_attempt) === 1
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                : 'bg-slate-700/60 text-slate-300 border border-slate-600/50'
+                            }`}
+                            title={`Attempt: ${u.no_of_attempt ?? 0}`}
+                          >
+                            {u.no_of_attempt ?? 0}
+                          </span>
+                          <button
+                            onClick={() => handleOpenAttemptModal(u)}
+                            title="অ্যাটেম্পট এডিট করুন"
+                            className="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-600 text-amber-400 hover:text-white border border-amber-500/30 hover:border-amber-500 rounded-lg text-xs font-medium transition-all duration-200 shadow-sm"
+                          >
+                            <Edit className="h-3.5 w-3.5" />
+                            <span>এডিট</span>
+                          </button>
+                        </div>
+                      </td>
                       <td className="py-3.5 px-4 text-center">
                         <button
                           onClick={() => handleDeleteUser(u)}
@@ -370,7 +444,7 @@ export default function AdminUsers() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="py-8 text-center text-slate-500">
+                    <td colSpan="8" className="py-8 text-center text-slate-500">
                       কোনো ইউজার খুঁজে পাওয়া যায়নি।
                     </td>
                   </tr>
@@ -502,6 +576,28 @@ export default function AdminUsers() {
 
                 <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                    অ্যাটেম্পট (Attempt)
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className={`inline-flex items-center justify-center min-w-[28] px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                      Number(selectedUser.no_of_attempt) === 1
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                        : 'bg-slate-700/60 text-slate-300 border border-slate-600/50'
+                    }`}>
+                      {selectedUser.no_of_attempt ?? 0}
+                    </span>
+                    <button
+                      onClick={() => handleOpenAttemptModal(selectedUser)}
+                      className="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-500/10 hover:bg-amber-600 text-amber-400 hover:text-white border border-amber-500/30 hover:border-amber-500 rounded-lg text-xs font-medium transition-colors"
+                    >
+                      <Edit className="h-3 w-3" />
+                      <span>এডিট করুন</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
                     বিভাগ
                   </span>
                   <span className="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
@@ -576,6 +672,150 @@ export default function AdminUsers() {
           </div>
         </div>
       )}
+
+      {/* Edit Attempt Modal */}
+      {editingAttemptUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+          onClick={() => !updatingAttempt && setEditingAttemptUser(null)}
+        >
+          <div
+            className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl transition-all transform"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-700 bg-slate-900/50">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-amber-400">
+                  <Edit className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">অ্যাটেম্পট পরিবর্তন (Edit Attempt)</h3>
+                  <p className="text-xs text-slate-400">ইউজার: {editingAttemptUser.name || 'N/A'}</p>
+                </div>
+              </div>
+              <button
+                disabled={updatingAttempt}
+                onClick={() => setEditingAttemptUser(null)}
+                className="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-5">
+              {/* User Quick Info */}
+              <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60 space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-slate-400">ফোন / মোবাইল:</span>
+                  <span className="text-white font-medium">{editingAttemptUser.phone || editingAttemptUser.mobile || editingAttemptUser.email || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">বর্তমান অ্যাটেম্পট:</span>
+                  <span className={`px-2.5 py-0.5 rounded-full font-bold ${
+                    Number(editingAttemptUser.no_of_attempt) === 1
+                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                      : 'bg-slate-700/60 text-slate-300 border border-slate-600/50'
+                  }`}>
+                    {editingAttemptUser.no_of_attempt ?? 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">উত্তর সাবমিশন স্ট্যাটাস:</span>
+                  <span className={editingAttemptUser.is_submitted ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}>
+                    {editingAttemptUser.is_submitted ? 'উত্তর জমা আছে (Submitted)' : 'উত্তর জমা নেই (Not Submitted)'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Target Attempt Selection */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  নতুন অ্যাটেম্পট নির্বাচন করুন:
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTargetAttempt(0)}
+                    className={`p-3 rounded-xl border text-center transition-all ${
+                      targetAttempt === 0
+                        ? 'bg-red-500/20 border-red-500 text-white font-bold ring-2 ring-red-500/30'
+                        : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
+                    }`}
+                  >
+                    <div className="text-base font-bold">০ (Attempt 0)</div>
+                    <div className="text-[11px] text-red-400 mt-1">রিসেট ও উত্তর ডিলিট</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTargetAttempt(1)}
+                    className={`p-3 rounded-xl border text-center transition-all ${
+                      targetAttempt === 1
+                        ? 'bg-amber-500/20 border-amber-500 text-white font-bold ring-2 ring-amber-500/30'
+                        : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'
+                    }`}
+                  >
+                    <div className="text-base font-bold">১ (Attempt 1)</div>
+                    <div className="text-[11px] text-amber-400 mt-1">অ্যাটেম্পট সম্পন্ন</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Warning or Notice Callout */}
+              {targetAttempt === 0 ? (
+                <div className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-xs text-red-300 space-y-1.5">
+                  <div className="font-bold flex items-center space-x-1.5 text-red-400">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>উত্তর মুছে ফেলার সতর্কতা:</span>
+                  </div>
+                  <p className="leading-relaxed">
+                    অ্যাটেম্পট <strong>০</strong> তে পরিবর্তন করলে ইউজারের ডেটাবেজে থাকা সাবমিট করা উত্তরটি (User Answer) <strong>স্থায়ীভাবে মুছে ফেলা হবে</strong> এবং ইউজার পুনরায় নতুন করে পরীক্ষায় অংশগ্রহণ করতে পারবে।
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3.5 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-xs text-indigo-300 space-y-1.5">
+                  <div className="font-bold flex items-center space-x-1.5 text-indigo-400">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>তথ্য:</span>
+                  </div>
+                  <p className="leading-relaxed">
+                    অ্যাটেম্পট <strong>১</strong> তে সেট করলে ইউজার ইতিমধ্যে পরীক্ষা সম্পন্ন করেছে বলে গণ্য হবে এবং পুনরায় পরীক্ষা দিতে পারবে না।
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-700 bg-slate-900/50 flex justify-end items-center space-x-3">
+              <button
+                type="button"
+                disabled={updatingAttempt}
+                onClick={() => setEditingAttemptUser(null)}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white rounded-lg text-xs font-medium transition-colors"
+              >
+                বাতিল
+              </button>
+              <button
+                type="button"
+                disabled={updatingAttempt}
+                onClick={handleUpdateAttempt}
+                className={`px-4 py-2 text-white rounded-lg text-xs font-medium transition-all flex items-center space-x-1.5 shadow-md ${
+                  targetAttempt === 0
+                    ? 'bg-red-600 hover:bg-red-500 disabled:bg-red-800'
+                    : 'bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800'
+                }`}
+              >
+                {updatingAttempt && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                <span>
+                  {targetAttempt === 0 ? '০ তে কনভার্ট ও উত্তর ডিলিট করুন' : 'অ্যাটেম্পট ১ হিসেবে সংরক্ষণ করুন'}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   );
 }

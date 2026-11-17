@@ -47,9 +47,8 @@ useEffect(() => {
  
 
   const handleVerificationSuccessful = async () => {
-    
     // Check if user has already attempted the exam
-    if (user.no_of_attempt !== null && user.no_of_attempt !== undefined) {
+    if (user.no_of_attempt == 1 ) {
       toast.error('আপনি ইতিমধ্যে পরীক্ষা দিয়েছেন। পুনরায় পরীক্ষা দেওয়া সম্ভব নয়।');
       return;
     }
@@ -102,21 +101,29 @@ useEffect(() => {
     const { name, phone, division, district, upazila, institute } = user;
     // console.log(name,phone,division,district,upazila,institute);
     const token = localStorage.getItem('token'); // লোকাল স্টোরেজ থেকে টোকেন নেওয়া
-    // console.log("Answers:   ",selectedAnswers);
+    // Ensure answers are strictly sorted and submitted according to question ID (e.g. 1, 2, 3...)
+    const currentAns = answersRef.current || {};
+    const answersAccordingToId = {};
+    Object.keys(currentAns)
+      .sort((a, b) => Number(a) - Number(b))
+      .forEach((qId) => {
+        answersAccordingToId[qId] = currentAns[qId];
+      });
+
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/answers/submit-quiz`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' ,
           'Authorization': `Bearer ${token}`
         },
-          body: JSON.stringify({
+        body: JSON.stringify({
           name: name,
           phone: phone,
           division: division,
           district: district,
           upazila: upazila,
           institute: institute,
-          answers: answersRef.current
+          answers: answersAccordingToId
         })
       });
       
@@ -127,9 +134,9 @@ useEffect(() => {
 
       setStatusMessage({ type: 'success', text: 'আপনার কুইজ উত্তরটি সফলভাবে জমা হয়েছে!' });
       localStorage.removeItem('exam_answers');
-     // localStorage.removeItem('isQuizVerified');
+      localStorage.removeItem('exam_questions_order');
       
-          navigate('/submitted');
+      navigate('/submitted');
        
 
     } catch (err) {

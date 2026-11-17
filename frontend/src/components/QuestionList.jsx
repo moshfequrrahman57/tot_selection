@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
+// Fisher-Yates shuffle algorithm to randomize questions
+const shuffleQuestions = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const QuestionList = ({onAnswerChange, currentAnswers}) => {
   // স্টেট ম্যানেজমেন্ট
   const [questions, setQuestions] = useState([]);
@@ -28,8 +38,48 @@ const QuestionList = ({onAnswerChange, currentAnswers}) => {
           throw new Error('নেটওয়ার্ক রেসপন্স ঠিক ছিল না');
         }
         const data = await response.json();
-        const sortedData = [...data].sort((a, b) => a.id - b.id);
-        setQuestions(sortedData);
+
+        // র্যান্ডমাইজ প্রশ্ন ক্রম (ব্যবহারকারীর রিফ্রেশেও আগের অর্ডার ধরে রাখতে localStorage ব্যবহার)
+        let randomizedQuestions = [];
+        const savedOrderJson = localStorage.getItem('exam_questions_order');
+
+        if (savedOrderJson) {
+          try {
+            const savedIds = JSON.parse(savedOrderJson);
+            if (Array.isArray(savedIds) && savedIds.length > 0) {
+              const questionMap = new Map(data.map((q) => [q.id, q]));
+              savedIds.forEach((id) => {
+                if (questionMap.has(id)) {
+                  randomizedQuestions.push(questionMap.get(id));
+                  questionMap.delete(id);
+                }
+              });
+
+              // যদি কোনো নতুন প্রশ্ন যোগ হয়ে থাকে যা পূর্বের অর্ডারে ছিল না
+              if (questionMap.size > 0) {
+                const remaining = shuffleQuestions(Array.from(questionMap.values()));
+                randomizedQuestions.push(...remaining);
+                localStorage.setItem(
+                  'exam_questions_order',
+                  JSON.stringify(randomizedQuestions.map((q) => q.id))
+                );
+              }
+            }
+          } catch (e) {
+            console.error('Failed to parse saved questions order:', e);
+          }
+        }
+
+        // যদি পূর্বে কোনো সেভ করা র্যান্ডম ক্রম না থাকে, তবে নতুন করে র্যান্ডমাইজ করে সেভ করা
+        if (randomizedQuestions.length === 0 && Array.isArray(data)) {
+          randomizedQuestions = shuffleQuestions(data);
+          localStorage.setItem(
+            'exam_questions_order',
+            JSON.stringify(randomizedQuestions.map((q) => q.id))
+          );
+        }
+
+        setQuestions(randomizedQuestions);
         setLoading(false);
       } catch (err) {
         setError(err.message);

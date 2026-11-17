@@ -33,8 +33,8 @@ profileinfo_route.post('/update-attempt', protect, async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    // Update no_of_attempt to 1 only if it is currently NULL
-    const queryText = 'UPDATE users SET no_of_attempt = 1 WHERE id = $1 AND no_of_attempt IS NULL RETURNING no_of_attempt';
+    // Update no_of_attempt to 1 only if it is currently 0 or null
+    const queryText = 'UPDATE users SET no_of_attempt = 1 WHERE id = $1 AND (no_of_attempt = 0 OR no_of_attempt IS NULL) RETURNING no_of_attempt';
     const result = await pool.query(queryText, [userId]);
 
     if (result.rows.length === 0) {
