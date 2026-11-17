@@ -1,0 +1,107 @@
+# 🚀 Production Docker Compose Configuration for VPS
+# Usage: docker compose -f docker-compose.prod.yaml up -d --build
+
+services:
+  # 1. Express Backend Service
+  backend-app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: moshfequrrahman57/tot_backend:latest
+    restart: always
+    environment:
+      - PORT=${PORT:-6001}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE}
+      - REDIS_URL=redis://redis-cache:6379
+      - FRONTEND_URL=${FRONTEND_URL}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+    networks:
+      - quiz-network
+
+  # 2. React Frontend Service
+  frontend-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: moshfequrrahman57/tot_frontend:latest
+    restart: always
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+    depends_on:
+      - backend-app
+    networks:
+      - quiz-network
+
+  # 3. PostgreSQL Database (Internal only, not exposed to public internet for security)
+  postgres-db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quiz-network
+
+  # 4. Redis Cache (Internal only, not exposed to public internet)
+  redis-cache:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - quiz-network
+
+  # 5. Nginx Reverse Proxy (Public Entrypoint: Ports 80 & 443)
+  nginx:
+    image: nginx:alpine
+    container_name: tot_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    depends_on:
+      - frontend-app
+      - backend-app
+    networks:
+      - quiz-network
+
+  # 6. Certbot for Automated Let's Encrypt SSL Renewals (Optional)
+  certbot:
+    image: certbot/certbot
+    container_name: tot_certbot
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - quiz-network
+
+volumes:
+  pgdata:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  quiz-network:
+    driver: bridge
