@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     upazila VARCHAR(50),
     institute VARCHAR(150),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	no_of_attempt INT
+	no_of_attempt INT DEFAULT O
 );
 
 CREATE TABLE user_answers (
