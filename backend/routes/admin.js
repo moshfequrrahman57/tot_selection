@@ -35,7 +35,7 @@ admin_route.get('/user', async (req, res)=>{
 admin_route.post('/secret', async (req, res)=>{
     const { access_code } =req.body;
     try{
-        const ADMIN_SECRET_CODE="181126";
+        const ADMIN_SECRET_CODE="1111";
 
         if(!access_code){
             return res.status(400).json({ success: false, error: 'অনুগ্রহ করে সিক্রেট কোডটি দিন '}); 
